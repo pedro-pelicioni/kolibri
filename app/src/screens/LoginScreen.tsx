@@ -23,7 +23,7 @@ import { PrimaryButton } from '../components/PrimaryButton';
 import { SecondaryButton } from '../components/SecondaryButton';
 
 import { useSession } from '../context/SessionContext';
-import { connectWallet } from '../wallet/MobileWalletAdapter';
+import { config } from '../config';
 
 /**
  * Login screen — entry point of the ERP. Mock auth: any non-empty email/password
@@ -59,8 +59,9 @@ export function LoginScreen() {
     setWalletBusy(true);
     setError(null);
     try {
-      const session = await connectWallet('devnet');
-      await loginWithWallet(session.publicKey);
+      // SessionContext.loginWithWallet faz challenge SIWS → MWA sign → verify
+      // → persist JWT em modo real; vira mock determinístico se useStub=true.
+      await loginWithWallet({ role: 'cultivator' });
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Falha ao conectar carteira');
     } finally {
@@ -88,51 +89,59 @@ export function LoginScreen() {
           <Text style={styles.title}>Entrar no painel</Text>
           <Text style={styles.lede}>
             Plataforma de rastreabilidade seed-to-sale conforme ANVISA RDC
-            1.015/2026 e LGPD. Use suas credenciais corporativas.
+            1.015/2026 e LGPD. {config.useStub
+              ? 'Use suas credenciais corporativas.'
+              : 'Entre via carteira (Sign-In With Solana).'}
           </Text>
 
-          <View style={styles.form}>
-            <TextField
-              label="Email corporativo"
-              placeholder="operador@dispensario.com.br"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              textContentType="emailAddress"
-            />
-            <TextField
-              label="Senha"
-              placeholder="••••••••"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              textContentType="password"
-            />
+          {config.useStub && (
+            <>
+              <View style={styles.form}>
+                <TextField
+                  label="Email corporativo"
+                  placeholder="operador@dispensario.com.br"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  textContentType="emailAddress"
+                />
+                <TextField
+                  label="Senha"
+                  placeholder="••••••••"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  textContentType="password"
+                />
 
-            {!!error && <Text style={styles.error}>{error}</Text>}
+                {!!error && <Text style={styles.error}>{error}</Text>}
 
-            <PrimaryButton
-              label="Entrar"
-              loading={busy}
-              disabled={walletBusy}
-              onPress={handleLogin}
-            />
+                <PrimaryButton
+                  label="Entrar"
+                  loading={busy}
+                  disabled={walletBusy}
+                  onPress={handleLogin}
+                />
 
-            <Pressable
-              onPress={() => Alert.alert('Em breve', 'Recuperação de senha será habilitada na próxima versão.')}
-              style={({ pressed }) => [styles.forgot, pressed && { opacity: 0.6 }]}
-            >
-              <Text style={styles.forgotText}>Esqueci minha senha</Text>
-            </Pressable>
-          </View>
+                <Pressable
+                  onPress={() => Alert.alert('Em breve', 'Recuperação de senha será habilitada na próxima versão.')}
+                  style={({ pressed }) => [styles.forgot, pressed && { opacity: 0.6 }]}
+                >
+                  <Text style={styles.forgotText}>Esqueci minha senha</Text>
+                </Pressable>
+              </View>
 
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>OU</Text>
-            <View style={styles.dividerLine} />
-          </View>
+              <View style={styles.divider}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>OU</Text>
+                <View style={styles.dividerLine} />
+              </View>
+            </>
+          )}
+
+          {!config.useStub && !!error && <Text style={styles.error}>{error}</Text>}
 
           <SecondaryButton
             label="Conectar com carteira (Seed Vault)"

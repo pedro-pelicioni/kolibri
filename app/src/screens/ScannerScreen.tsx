@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   StatusBar,
   Pressable,
+  Alert,
 } from 'react-native';
 import { QrCode, Nfc, ScanLine, ArrowLeft } from 'lucide-react-native';
 
@@ -13,6 +14,10 @@ import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 import { spacing, radius } from '../theme/spacing';
 
+import { TextField } from '../components/TextField';
+import { PrimaryButton } from '../components/PrimaryButton';
+import { config } from '../config';
+import { resolveQrPayload } from '../api/events';
 import { mockPassport } from '../mocks/passport.mock';
 import type { ScreenProps } from '../navigation/types';
 
@@ -24,10 +29,31 @@ import type { ScreenProps } from '../navigation/types';
  * mock passport.
  */
 export function ScannerScreen({ navigation }: ScreenProps<'scanner'>) {
-  function handleScan() {
-    // In production: parse the QR text (https://dpo2u.com/kolibri/verify/<batchId>),
-    // GET /batches/:id + /batches/:id/events, build the PlantPassport, then navigate.
+  const [manualCode, setManualCode] = useState('');
+  const [resolving, setResolving] = useState(false);
+
+  function handleDemoTap() {
     navigation.replace('passport', { passport: mockPassport });
+  }
+
+  async function handleResolve() {
+    const code = manualCode.trim();
+    if (!code) {
+      Alert.alert('Informe um código', 'Cole o batchId, PDA ou URL de verificação.');
+      return;
+    }
+    setResolving(true);
+    try {
+      const passport = await resolveQrPayload(code);
+      navigation.replace('passport', { passport });
+    } catch (e) {
+      Alert.alert(
+        'Não encontrado',
+        e instanceof Error ? e.message : 'Verifique se o código está correto.',
+      );
+    } finally {
+      setResolving(false);
+    }
   }
 
   return (
@@ -67,19 +93,38 @@ export function ScannerScreen({ navigation }: ScreenProps<'scanner'>) {
             <Text style={styles.viewfinderHint}>Camera viewfinder</Text>
           </View>
 
-          <Pressable
-            onPress={handleScan}
-            style={({ pressed }) => [styles.demoTap, pressed && { opacity: 0.7 }]}
-            accessibilityRole="button"
-            accessibilityLabel="Demo: abrir passport"
-          >
-            <Text style={styles.demoTapText}>Demo · abrir passport mock</Text>
-          </Pressable>
+          {config.useStub ? (
+            <Pressable
+              onPress={handleDemoTap}
+              style={({ pressed }) => [styles.demoTap, pressed && { opacity: 0.7 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Demo: abrir passport"
+            >
+              <Text style={styles.demoTapText}>Demo · abrir passport mock</Text>
+            </Pressable>
+          ) : null}
         </View>
 
         <View style={styles.methodsRow}>
           <Method icon={QrCode} label="QR Code" />
           <Method icon={Nfc} label="NFC Tap" />
+        </View>
+
+        {/* Entrada manual — útil enquanto a VisionCamera não está plugada. */}
+        <View style={styles.manualBlock}>
+          <TextField
+            label="Verificar manualmente"
+            placeholder="batchId, PDA ou URL"
+            value={manualCode}
+            onChangeText={setManualCode}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <PrimaryButton
+            label={resolving ? 'Buscando…' : 'Verificar'}
+            onPress={handleResolve}
+            loading={resolving}
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -185,5 +230,9 @@ const styles = StyleSheet.create({
   methodLabel: {
     ...typography.caption,
     color: colors.textSecondary,
+  },
+  manualBlock: {
+    marginTop: spacing.xl,
+    gap: spacing.md,
   },
 });

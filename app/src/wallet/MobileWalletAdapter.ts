@@ -2,16 +2,17 @@
 // Solana Mobile Wallet Adapter (MWA) — Seeker integration
 // =====================================================================
 //
-// On the Solana Seeker, signing flows through the on-device Seed Vault via
-// the Mobile Wallet Adapter. No private key ever leaves the secure element,
-// and biometric confirmation is enforced by the OS.
+// No Solana Seeker, signing passa pelo Seed Vault via Mobile Wallet Adapter.
+// A private key nunca sai do secure element e a confirmação biométrica é
+// imposta pelo OS.
 //
-// Flip USE_STUB=false (and run on a Seeker, or on an Android emulator with
-// the MWA `fakewallet.apk` installed) to exercise the real Seed Vault flow.
+// O toggle real/stub está em `src/config.ts`. Quando `config.useStub=true`
+// todas as funções abaixo curto-circuitam pra mocks deterministicos — perfeito
+// pra demo e pra rodar jest sem o módulo nativo.
 //
-// Polyfills (`react-native-get-random-values`, `Buffer`) are wired in
-// index.js — required by @solana/web3.js before any of its types are
-// touched.
+// Polyfills (`react-native-get-random-values`, `Buffer`) ligados em index.js
+// — necessários por `@solana/web3.js` antes de qualquer tipo desta lib ser
+// tocado.
 // =====================================================================
 
 import { transact, type Web3MobileWallet } from
@@ -19,57 +20,53 @@ import { transact, type Web3MobileWallet } from
 import { PublicKey, Transaction } from '@solana/web3.js';
 import { Buffer } from 'buffer';
 
-export type Cluster = 'mainnet-beta' | 'devnet' | 'testnet';
+import { config, type Cluster } from '../config';
+import type { WalletSigner, AuthorizedWallet } from '../api/siws';
+import type { TransactionSigner } from '../api/tx';
+
+export type { Cluster };
+
+/** @deprecated — leia `config.useStub` direto pra clareza. */
+export const USE_STUB = config.useStub;
 
 export interface WalletSession {
-  /** Base58 public key — used as the SIWS identity and on-chain authority */
+  /** Base58 public key — identidade SIWS e authority on-chain */
   publicKey: string;
-  /** Human label resolved from agent-registry (cultivator/dispensary/lab/auditor) */
+  /** Label resolvido via agent-registry (cultivador/dispensário/lab/auditor) */
   label?: string;
-  /** Wallet provider name surfaced by MWA (e.g. "Phantom", "Solflare", "Seed Vault") */
+  /** Nome do provider exposto pelo MWA (e.g. "Seed Vault") */
   walletName: string;
-  /** Cluster we authorised against */
+  /** Cluster autorizado */
   cluster: Cluster;
-  /** Auth token returned by `wallet.authorize` — reuse for silent reconnect */
+  /** Auth token devolvido por `wallet.authorize` — reusar pra silent reconnect */
   authToken: string;
 }
-
-const APP_IDENTITY = {
-  name: 'Kolibri',
-  uri: 'https://dpo2u.com/kolibri',
-  icon: 'favicon.ico',
-} as const;
-
-// Flip to `false` once you're testing on a real Seeker (or Android emulator
-// with the fakewallet companion app installed). Keep `true` to run the demo
-// without a wallet present — every function below short-circuits to a mock.
-export const USE_STUB = true;
 
 const STUB_SESSION: WalletSession = {
   publicKey: '8h4nE9dG2pQuYxJrTfX1aZ7kVbW3sLcPmDnQyB5RhKv6',
   walletName: 'Seed Vault (Seeker)',
   label: 'cultivator:42318911000104',
   cluster: 'devnet',
-  authToken: 'mwa-mock-auth-token',
+  authToken: 'mwa-stub-auth-token',
 };
 
+const STUB_SIGNATURE_BASE64 = 'BASE64STUB_SIGNATURE_NOT_VALID_ED25519==';
+const STUB_TX_BASE64 =
+  '5xR2YpKsHaQ9LbVcZmJ7nT3fW4dE1uG6jBoPiNvMqApRzXcKtUwYlSeFhDgRmJ9LnPpTuQwXyAaCbDcEfGh9pL';
+
 /**
- * Connect to the user's Solana Mobile wallet (Seed Vault on Seeker).
- *
- * Production flow:
- *   1. `transact(...)` opens the wallet companion app via Android intent
- *   2. `wallet.authorize` returns an auth_token + the user's selected account
- *   3. We hand the pubkey to the kolibri-gateway SIWS challenge endpoint
+ * Conecta na wallet do usuário (Seed Vault no Seeker).
+ * Produção: `transact(...)` abre o companion app via Android intent.
  */
 export async function connectWallet(
-  cluster: Cluster = 'devnet',
+  cluster: Cluster = config.cluster,
 ): Promise<WalletSession> {
-  if (USE_STUB) return { ...STUB_SESSION, cluster };
+  if (config.useStub) return { ...STUB_SESSION, cluster };
 
   return transact(async (wallet: Web3MobileWallet) => {
     const auth = await wallet.authorize({
       cluster,
-      identity: APP_IDENTITY,
+      identity: config.appIdentity,
     });
     const acct = auth.accounts[0];
     return {
@@ -83,14 +80,14 @@ export async function connectWallet(
 }
 
 /**
- * Sign an arbitrary UTF-8 payload via MWA (used for the SIWS challenge).
- * Returns the signature as base64.
+ * Assina UTF-8 via MWA (usado pelo challenge SIWS).
+ * Retorna a signature base64.
  */
 export async function signMessageWithWallet(
-  session: WalletSession,
+  session: Pick<WalletSession, 'publicKey'>,
   message: string,
 ): Promise<string> {
-  if (USE_STUB) return 'BASE64_MOCK_SIGNATURE==';
+  if (config.useStub) return STUB_SIGNATURE_BASE64;
 
   const signed = await transact(async (wallet: Web3MobileWallet) => {
     const out = await wallet.signMessages({
@@ -103,20 +100,14 @@ export async function signMessageWithWallet(
 }
 
 /**
- * Sign + submit a `cannabis-event` transaction prepared by the gateway.
- * Matches the 3-step flow documented in docs/MOBILE.md:
- *
- *   1. App  → gateway  POST /tx/build/cannabis-event   (gets unsigned tx)
- *   2. App  → MWA      signTransactions                (Seed Vault prompt)
- *   3. App  → gateway  POST /tx/submit                 (broadcast + persist)
+ * Assina + submete um `cannabis-event` tx preparado pelo gateway.
+ * Documentado em docs/MOBILE.md (3-pass flow).
  */
 export async function signAndSubmitEvent(
-  _session: WalletSession,
+  _session: Pick<WalletSession, 'publicKey'>,
   unsignedTxBase64: string,
 ): Promise<string> {
-  if (USE_STUB) {
-    return '5xR2YpKsHaQ9LbVcZmJ7nT3fW4dE1uG6jBoPiNvMqApRzXcKtUwYlSeFhDgRmJ9LnPpTuQwXyAaCbDcEfGh9pL';
-  }
+  if (config.useStub) return STUB_TX_BASE64;
 
   const tx = Transaction.from(Buffer.from(unsignedTxBase64, 'base64'));
   const signed = await transact(async (wallet: Web3MobileWallet) => {
@@ -126,11 +117,42 @@ export async function signAndSubmitEvent(
   return Buffer.from(signed.serialize()).toString('base64');
 }
 
-// Cosmetic helper — turn a base58 sig into the short form printed everywhere.
+/**
+ * Factory injetável que implementa os contratos esperados pelo api/siws.ts
+ * (WalletSigner) e api/tx.ts (TransactionSigner). Mantém uma referência pra
+ * última sessão autorizada — necessário pra signTransaction saber qual pubkey
+ * usar.
+ *
+ * Em testes, NÃO use isto; injete um fake direto (vide
+ * src/api/__tests__/siws.test.ts).
+ */
+export function getWalletSigner(): WalletSigner & TransactionSigner {
+  let session: WalletSession | null = null;
+
+  return {
+    async authorize(cluster: Cluster): Promise<AuthorizedWallet> {
+      session = await connectWallet(cluster);
+      return {
+        publicKey: session.publicKey,
+        walletName: session.walletName,
+        authToken: session.authToken,
+      };
+    },
+    async signMessage(pubkey: string, message: string): Promise<string> {
+      return signMessageWithWallet({ publicKey: pubkey }, message);
+    },
+    async signTransaction(unsignedTxBase64: string): Promise<string> {
+      const pk = session?.publicKey ?? STUB_SESSION.publicKey;
+      return signAndSubmitEvent({ publicKey: pk }, unsignedTxBase64);
+    },
+  };
+}
+
+/** Helper visual — encurta uma sig base58 pro formato "5xR2…9pL". */
 export function truncateSignature(sig: string, head = 5, tail = 4): string {
   if (sig.length <= head + tail + 3) return sig;
   return `${sig.slice(0, head)}…${sig.slice(-tail)}`;
 }
 
-export const _internal = { APP_IDENTITY };
+export const _internal = { APP_IDENTITY: config.appIdentity };
 export type { Web3MobileWallet };

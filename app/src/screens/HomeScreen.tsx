@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   ScrollView,
   Pressable,
   Alert,
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { Plus, QrCode, Search, LogOut } from 'lucide-react-native';
 
@@ -20,11 +22,41 @@ import { Section } from '../components/Section';
 import { BatchListItem } from '../components/BatchListItem';
 
 import { useSession } from '../context/SessionContext';
-import { mockBatches } from '../mocks/passport.mock';
+import { listBatches } from '../api/batches';
+import type { PlantPassport } from '../types/passport';
 import type { ScreenProps } from '../navigation/types';
 
 export function HomeScreen({ navigation }: ScreenProps<'home'>) {
   const { session, logout } = useSession();
+  const [batches, setBatches] = useState<PlantPassport[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setError(null);
+    try {
+      const next = await listBatches();
+      setBatches(next);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Falha ao carregar lotes');
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await load();
+      if (!cancelled) setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [load]);
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await load();
+    setRefreshing(false);
+  }
 
   function confirmLogout() {
     Alert.alert(
@@ -64,6 +96,7 @@ export function HomeScreen({ navigation }: ScreenProps<'home'>) {
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {/* Greeting */}
         <View>
@@ -91,15 +124,35 @@ export function HomeScreen({ navigation }: ScreenProps<'home'>) {
 
         {/* Recent batches */}
         <Section eyebrow="Lotes" title="Certificados recentes">
-          <View style={{ gap: spacing.md }}>
-            {mockBatches.map((b) => (
-              <BatchListItem
-                key={b.batchId}
-                passport={b}
-                onPress={() => navigation.navigate('passport', { passport: b })}
-              />
-            ))}
-          </View>
+          {loading ? (
+            <View style={styles.loadingRow}>
+              <ActivityIndicator color={colors.brand500} />
+              <Text style={styles.loadingText}>Carregando do gateway…</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.errorBox}>
+              <Text style={styles.errorTitle}>Erro</Text>
+              <Text style={styles.errorBody}>{error}</Text>
+              <Pressable
+                onPress={() => { setLoading(true); load().finally(() => setLoading(false)); }}
+                style={({ pressed }) => [styles.retryBtn, pressed && { opacity: 0.7 }]}
+              >
+                <Text style={styles.retryText}>Tentar novamente</Text>
+              </Pressable>
+            </View>
+          ) : batches.length === 0 ? (
+            <Text style={styles.emptyText}>Nenhum lote ainda. Crie o primeiro.</Text>
+          ) : (
+            <View style={{ gap: spacing.md }}>
+              {batches.map((b) => (
+                <BatchListItem
+                  key={b.batchId}
+                  passport={b}
+                  onPress={() => navigation.navigate('passport', { passport: b })}
+                />
+              ))}
+            </View>
+          )}
         </Section>
 
         {/* Quick actions */}
@@ -254,5 +307,50 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textMuted,
     fontSize: 13,
+  },
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.lg,
+  },
+  loadingText: {
+    ...typography.body,
+    color: colors.textSecondary,
+    fontSize: 13,
+  },
+  errorBox: {
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+    gap: spacing.sm,
+  },
+  errorTitle: {
+    ...typography.bodyStrong,
+    color: colors.textPrimary,
+    fontSize: 13,
+  },
+  errorBody: {
+    ...typography.body,
+    color: colors.textSecondary,
+    fontSize: 12,
+  },
+  retryBtn: {
+    alignSelf: 'flex-start',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  retryText: {
+    ...typography.caption,
+    color: colors.textSecondary,
+  },
+  emptyText: {
+    ...typography.body,
+    color: colors.textMuted,
+    fontSize: 13,
+    paddingVertical: spacing.lg,
   },
 });

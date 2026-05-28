@@ -21,8 +21,16 @@ import { TextField } from '../components/TextField';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { ProductPhoto } from '../components/ProductPhoto';
 
+import { useSession } from '../context/SessionContext';
+import { config } from '../config';
+import { createBatch, getBatchPassport } from '../api/batches';
+import { anchorCannabisEvent } from '../api/tx';
+import { getWalletSigner } from '../wallet/MobileWalletAdapter';
 import { makeNewBatch } from '../mocks/passport.mock';
 import type { ScreenProps } from '../navigation/types';
+
+// PACKAGED = 11 no enum event_type do gateway (vide event-schemas.md).
+const EVENT_TYPE_PACKAGED = 11;
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -34,6 +42,8 @@ function todayISO() {
  * navigates to the passport view.
  */
 export function CreateCertificateScreen({ navigation }: ScreenProps<'create'>) {
+  const { session } = useSession();
+
   const [strain, setStrain] = useState('');
   const [cultivar, setCultivar] = useState('');
   const [weight, setWeight] = useState('');
@@ -42,6 +52,7 @@ export function CreateCertificateScreen({ navigation }: ScreenProps<'create'>) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
 
   function validate(): boolean {
     const next: Record<string, string> = {};
@@ -60,20 +71,56 @@ export function CreateCertificateScreen({ navigation }: ScreenProps<'create'>) {
   async function handleSubmit() {
     if (!validate()) return;
     setSubmitting(true);
+    setStatus(null);
     try {
-      // Mock blockchain anchor — in production this becomes:
-      //   const built = await api.post('/tx/build/cannabis-event', payload)
-      //   const signed = await signAndSubmitEvent(session, built.tx_bytes_b64)
-      //   await api.post('/tx/submit', { event_id, signed_tx_b64 })
-      await new Promise<void>((r) => { setTimeout(r, 1500); });
-      const newPassport = makeNewBatch({
-        strainName: strain.trim(),
-        cultivarCode: cultivar.trim().toUpperCase(),
-        netWeightGrams: Number(weight),
-        harvestDate: new Date(harvest).toISOString(),
-        notes: notes.trim(),
+      const cultivarCode = cultivar.trim().toUpperCase();
+      const trimmedStrain = strain.trim();
+      const grams = Number(weight);
+
+      // Modo demo: cria passport sintético sem tocar o gateway.
+      if (config.useStub) {
+        setStatus('Ancorando (mock)…');
+        await new Promise<void>((r) => { setTimeout(r, 1500); });
+        const newPassport = makeNewBatch({
+          strainName: trimmedStrain,
+          cultivarCode,
+          netWeightGrams: grams,
+          harvestDate: new Date(harvest).toISOString(),
+          notes: notes.trim(),
+        });
+        navigation.replace('passport', { passport: newPassport });
+        return;
+      }
+
+      // Real mode: createBatch → anchor PACKAGED event → hidrata passport.
+      setStatus('Criando batch no gateway…');
+      const { id: batchId } = await createBatch({
+        cultivarCode,
+        originEventType: EVENT_TYPE_PACKAGED,
       });
-      navigation.replace('passport', { passport: newPassport });
+
+      setStatus('Aguardando assinatura no Seed Vault…');
+      const agentName = session?.pubkey ? `cultivator:${session.pubkey.slice(0, 12)}` : 'cultivator:demo';
+      await anchorCannabisEvent(getWalletSigner(), {
+        batchId,
+        eventType: EVENT_TYPE_PACKAGED,
+        cultivarCode,
+        agentName,
+        payload: {
+          evt: 'PACKAGED',
+          schema_v: 1,
+          strain_name: trimmedStrain,
+          cultivar_code: cultivarCode,
+          net_weight_grams: grams,
+          harvest_date: new Date(harvest).toISOString(),
+          notes: notes.trim() || undefined,
+          ts: Math.floor(Date.now() / 1000),
+        },
+      });
+
+      setStatus('Lendo passport on-chain…');
+      const passport = await getBatchPassport(batchId);
+      navigation.replace('passport', { passport });
     } catch (e) {
       Alert.alert(
         'Erro ao ancorar',
@@ -81,6 +128,7 @@ export function CreateCertificateScreen({ navigation }: ScreenProps<'create'>) {
       );
     } finally {
       setSubmitting(false);
+      setStatus(null);
     }
   }
 
@@ -189,7 +237,7 @@ export function CreateCertificateScreen({ navigation }: ScreenProps<'create'>) {
           </View>
 
           <PrimaryButton
-            label={submitting ? 'Ancorando no blockchain…' : 'Criar e ancorar'}
+            label={submitting ? (status ?? 'Ancorando no blockchain…') : 'Criar e ancorar'}
             onPress={handleSubmit}
             loading={submitting}
           />
