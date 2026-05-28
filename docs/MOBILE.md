@@ -80,7 +80,7 @@ yarn add \
 
 ```bash
 yarn add -D openapi-typescript
-npx openapi-typescript https://kolibri-gateway.dev.dpo2u.com/openapi.json -o src/api.d.ts
+npx openapi-typescript https://dpo2u.com/kolibri/openapi.json -o src/api.d.ts
 ```
 
 Resultado: tipos 100% sincronizados com o gateway. Sem RPC, sem manual drift.
@@ -91,7 +91,7 @@ Resultado: tipos 100% sincronizados com o gateway. Sem RPC, sem manual drift.
 // src/api/client.ts
 import type { paths } from '../api.d';
 
-const BASE = 'https://kolibri-gateway.dev.dpo2u.com';
+const BASE = 'https://dpo2u.com/kolibri';
 
 let accessToken: string | null = null;
 
@@ -298,7 +298,7 @@ App aponta pra http://<server-ip>:8090 — fluxo completo SIWS → MWA → ancho
 - **Backend**: shipped + tested + 20 endpoints OpenAPI documentados
 - **Tests**: 19/19 verde (siws, jwt, canonical-json, ulid)
 - **OpenAPI**: gerado em `openapi.json` (837 linhas) — pronto pra openapi-typescript no app
-- **Próximo passo DPO2U**: deploy do gateway em devnet (`https://kolibri-gateway.dev.dpo2u.com`) — aguardando ack do Chairman
+- **Gateway DPO2U**: LIVE em `https://dpo2u.com/kolibri` (health verificado 2026-05-28, v0.1.0, 20 rotas OpenAPI)
 - **Próximo passo Pedro**: `npx react-native init` + gerar tipos + tela login SIWS
 
 ## Limitações conscientes do MVP
