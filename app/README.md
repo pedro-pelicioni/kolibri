@@ -1,106 +1,97 @@
-# Kolibri — Mobile App (Seeker)
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-Hackathon-ready React Native (TypeScript) scaffold for the **Digital Plant
-Passport** flow. Targets the Solana Seeker.
+# Getting Started
 
-## What's in here
+> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-```
-app/
-├── App.tsx                                # Scanner → Passport route switcher
-└── src/
-    ├── theme/                             # Design tokens
-    │   ├── colors.ts                      # Clinical greens, slate typography
-    │   ├── typography.ts                  # Sans-serif type scale
-    │   └── spacing.ts                     # 4-pt grid + radius tokens
-    ├── types/passport.ts                  # PlantPassport / TimelineEvent / Proof types
-    ├── mocks/passport.mock.ts             # Cannatonic CBD demo data
-    ├── wallet/MobileWalletAdapter.ts      # MWA / Seed Vault stub (Solana)
-    ├── components/
-    │   ├── VerifiedBadge.tsx              # Green "Verified Authentic" pill
-    │   ├── LabDataCard.tsx                # 2×2 lab grid tile
-    │   ├── TraceabilityTimeline.tsx       # Vertical Minespider stepper
-    │   ├── ProofOfExistenceCard.tsx       # Dark Solana-receipt footer card
-    │   └── ConnectWalletButton.tsx        # Big "Connect Wallet" CTA
-    └── screens/
-        ├── ScannerScreen.tsx              # QR / NFC entry + wallet button
-        └── PlantPassportScreen.tsx        # The certificate hero screen
+## Step 1: Start Metro
+
+First, you will need to run **Metro**, the JavaScript build tool for React Native.
+
+To start the Metro dev server, run the following command from the root of your React Native project:
+
+```sh
+# Using npm
+npm start
+
+# OR using Yarn
+yarn start
 ```
 
-## Wire it up
+## Step 2: Build and run your app
 
-1. **Scaffold the React Native project** (from the `app/` directory's parent):
+With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
 
-   ```bash
-   npx react-native@latest init KolibriApp --template react-native-template-typescript
-   ```
+### Android
 
-2. **Copy the contents of `app/`** into the freshly generated `KolibriApp/`
-   (replacing `App.tsx`, merging `src/`).
+```sh
+# Using npm
+npm run android
 
-3. **Install runtime deps**:
+# OR using Yarn
+yarn android
+```
 
-   ```bash
-   yarn add \
-     @solana-mobile/mobile-wallet-adapter-protocol \
-     @solana-mobile/mobile-wallet-adapter-protocol-web3js \
-     @solana/web3.js \
-     react-native-get-random-values \
-     buffer \
-     lucide-react-native \
-     react-native-svg
-   ```
+### iOS
 
-   `lucide-react-native` requires `react-native-svg` as a peer dep.
+For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
 
-4. **Flip the MWA stub off** — open `src/wallet/MobileWalletAdapter.ts`,
-   set `USE_STUB = false`, and uncomment the three real-call blocks marked
-   `=== Real MWA flow ===`.
+The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
 
-5. **(Optional) Camera scanner** — add `react-native-vision-camera` and mount
-   it inside the viewfinder cutout in `ScannerScreen.tsx`.
+```sh
+bundle install
+```
 
-6. **Run on a Seeker** (or Android emulator with the MWA fakewallet APK):
+Then, and every time you update your native dependencies, run:
 
-   ```bash
-   yarn android
-   ```
+```sh
+bundle exec pod install
+```
 
-## What the demo shows
+For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
 
-- **Scanner** lights up the QR/NFC viewfinder placeholder and the
-  Mobile Wallet Adapter "Connect Wallet" CTA.
-- Tap **Demo · open mock passport** (or once VisionCamera is wired, scan
-  a real QR pointing to a Kolibri batch id) → renders the Plant Passport.
-- **Plant Passport** shows:
-  - Hero strain block with the "Verified Authentic" badge
-  - Quick-fact strip (harvest / weight / farm)
-  - 2×2 Lab Panel with CBD%, THC% (`< 0.3% ANVISA`), totals + lab name
-  - Compliance strip (microbiology / heavy metals / solvents / pesticides)
-  - **Traceability Timeline** — Minespider-style vertical stepper, every
-    step links to its Solana tx on Solscan
-  - **Proof of Existence** dark card with the tx signature, PDA, slot,
-    payload SHA-256 + Shadow Drive URI, and a "View on Solana Explorer" CTA
+```sh
+# Using npm
+npm run ios
 
-## Talking points for judges
+# OR using Yarn
+yarn ios
+```
 
-- **Seed Vault signing** — every event signature is hardware-backed via
-  the Seeker's secure element; the app never sees a private key.
-- **NFC tap-to-verify** — same `onScanned(batchId)` callback feeds from
-  Android's native NFC stack; dispensaries tap the package, no QR needed.
-- **cNFT cost story** — emitting thousands of compliance certificates via
-  Metaplex compressed NFTs costs fractions of a cent on Solana.
-- **Canonical-JSON audit trail** — the SHA-256 shown on the PoE card is
-  recomputable by any auditor against the Shadow Drive payload.
+If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
 
-## Gateway pairing
+This is one way to run your app — you can also build it directly from Android Studio or Xcode.
 
-This UI runs zero-network in demo mode. When you wire it to the real
-gateway (`https://dpo2u.com/kolibri`), populate `mockPassport` from:
+## Step 3: Modify your app
 
-- `GET /batches/:id` → cultivator / batch fields
-- `GET /batches/:id/events` → `timeline[]`
-- `GET /events/by-pda/:pda` → `proof` (network, signature, PDA, slot, hash)
+Now that you have successfully run the app, let's make changes!
 
-OpenAPI spec at `https://dpo2u.com/kolibri/openapi.json` — pipe through
-`openapi-typescript` for fully-typed fetch wrappers.
+Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+
+When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+
+- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
+- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+
+## Congratulations! :tada:
+
+You've successfully run and modified your React Native App. :partying_face:
+
+### Now what?
+
+- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
+- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+
+# Troubleshooting
+
+If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+
+# Learn More
+
+To learn more about React Native, take a look at the following resources:
+
+- [React Native Website](https://reactnative.dev) - learn more about React Native.
+- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
+- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
+- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
+- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.

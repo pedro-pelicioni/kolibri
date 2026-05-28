@@ -1,32 +1,23 @@
 // =====================================================================
-// Solana Mobile Wallet Adapter (MWA) — Seeker integration stub
+// Solana Mobile Wallet Adapter (MWA) — Seeker integration
 // =====================================================================
 //
 // On the Solana Seeker, signing flows through the on-device Seed Vault via
 // the Mobile Wallet Adapter. No private key ever leaves the secure element,
 // and biometric confirmation is enforced by the OS.
 //
-// This file is a *stub* — wired against the real @solana-mobile/* SDK calls
-// so it lights up the moment the dependency is installed. Until then, the
-// connect() function returns a deterministic mock so the demo screens render
-// without a real wallet present.
+// Flip USE_STUB=false (and run on a Seeker, or on an Android emulator with
+// the MWA `fakewallet.apk` installed) to exercise the real Seed Vault flow.
 //
-// Install (Pedro, day 1):
-//   yarn add \
-//     @solana-mobile/mobile-wallet-adapter-protocol \
-//     @solana-mobile/mobile-wallet-adapter-protocol-web3js \
-//     @solana/web3.js \
-//     react-native-get-random-values \
-//     buffer
-//
-// Then delete the `if (USE_STUB)` branch in connectWallet() and you're live.
+// Polyfills (`react-native-get-random-values`, `Buffer`) are wired in
+// index.js — required by @solana/web3.js before any of its types are
+// touched.
 // =====================================================================
 
-// NOTE: imports kept as `import type` so this file compiles even before the
-// SDK is installed. Replace with real value imports once you `yarn add`.
-import type {
-  Web3MobileWallet,
-} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+import { transact, type Web3MobileWallet } from
+  '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+import { PublicKey, Transaction } from '@solana/web3.js';
+import { Buffer } from 'buffer';
 
 export type Cluster = 'mainnet-beta' | 'devnet' | 'testnet';
 
@@ -49,9 +40,18 @@ const APP_IDENTITY = {
   icon: 'favicon.ico',
 } as const;
 
-// Flip to `false` once @solana-mobile/* is installed and you're testing on a
-// real Seeker (or Android emulator with the fakewallet companion app).
-const USE_STUB = true;
+// Flip to `false` once you're testing on a real Seeker (or Android emulator
+// with the fakewallet companion app installed). Keep `true` to run the demo
+// without a wallet present — every function below short-circuits to a mock.
+export const USE_STUB = true;
+
+const STUB_SESSION: WalletSession = {
+  publicKey: '8h4nE9dG2pQuYxJrTfX1aZ7kVbW3sLcPmDnQyB5RhKv6',
+  walletName: 'Seed Vault (Seeker)',
+  label: 'cultivator:42318911000104',
+  cluster: 'devnet',
+  authToken: 'mwa-mock-auth-token',
+};
 
 /**
  * Connect to the user's Solana Mobile wallet (Seed Vault on Seeker).
@@ -60,48 +60,26 @@ const USE_STUB = true;
  *   1. `transact(...)` opens the wallet companion app via Android intent
  *   2. `wallet.authorize` returns an auth_token + the user's selected account
  *   3. We hand the pubkey to the kolibri-gateway SIWS challenge endpoint
- *
- * The actual signing of the SIWS message + on-chain transactions is done by
- * `signMessageWithWallet()` and `signAndSubmitEvent()` below.
  */
 export async function connectWallet(
   cluster: Cluster = 'devnet',
 ): Promise<WalletSession> {
-  if (USE_STUB) {
-    // Mocked session — lets us demo the UI without an APK install
-    return {
-      publicKey: '8h4nE9dG2pQuYxJrTfX1aZ7kVbW3sLcPmDnQyB5RhKv6',
-      walletName: 'Seed Vault (Seeker)',
-      label: 'cultivator:42318911000104',
+  if (USE_STUB) return { ...STUB_SESSION, cluster };
+
+  return transact(async (wallet: Web3MobileWallet) => {
+    const auth = await wallet.authorize({
       cluster,
-      authToken: 'mwa-mock-auth-token',
+      identity: APP_IDENTITY,
+    });
+    const acct = auth.accounts[0];
+    return {
+      publicKey: new PublicKey(acct.address).toBase58(),
+      walletName: auth.wallet_uri_base ?? 'MWA Wallet',
+      label: acct.label,
+      cluster,
+      authToken: auth.auth_token,
     };
-  }
-
-  // === Real MWA flow (uncomment after `yarn add`) ===========================
-  //
-  // const { transact } =
-  //   require('@solana-mobile/mobile-wallet-adapter-protocol-web3js');
-  // const { PublicKey } = require('@solana/web3.js');
-  //
-  // return transact(async (wallet: Web3MobileWallet) => {
-  //   const auth = await wallet.authorize({
-  //     cluster,
-  //     identity: APP_IDENTITY,
-  //   });
-  //   const acct = auth.accounts[0];
-  //   return {
-  //     publicKey: new PublicKey(acct.address).toBase58(),
-  //     walletName: auth.wallet_uri_base ?? 'MWA Wallet',
-  //     label: acct.label,
-  //     cluster,
-  //     authToken: auth.auth_token,
-  //   };
-  // });
-  // ==========================================================================
-
-  // Keeps TypeScript happy while USE_STUB === true
-  throw new Error('MWA not implemented — set USE_STUB = false after install');
+  });
 }
 
 /**
@@ -109,25 +87,19 @@ export async function connectWallet(
  * Returns the signature as base64.
  */
 export async function signMessageWithWallet(
-  _session: WalletSession,
-  _message: string,
+  session: WalletSession,
+  message: string,
 ): Promise<string> {
   if (USE_STUB) return 'BASE64_MOCK_SIGNATURE==';
 
-  // const { transact } =
-  //   require('@solana-mobile/mobile-wallet-adapter-protocol-web3js');
-  // const { Buffer } = require('buffer');
-  //
-  // const signed = await transact(async (wallet: Web3MobileWallet) => {
-  //   const out = await wallet.signMessages({
-  //     addresses: [session.publicKey],
-  //     payloads: [Buffer.from(message, 'utf8')],
-  //   });
-  //   return out[0];
-  // });
-  // return Buffer.from(signed).toString('base64');
-
-  throw new Error('MWA not implemented');
+  const signed = await transact(async (wallet: Web3MobileWallet) => {
+    const out = await wallet.signMessages({
+      addresses: [session.publicKey],
+      payloads: [Buffer.from(message, 'utf8')],
+    });
+    return out[0];
+  });
+  return Buffer.from(signed).toString('base64');
 }
 
 /**
@@ -140,26 +112,18 @@ export async function signMessageWithWallet(
  */
 export async function signAndSubmitEvent(
   _session: WalletSession,
-  _unsignedTxBase64: string,
+  unsignedTxBase64: string,
 ): Promise<string> {
   if (USE_STUB) {
-    // Pretend we got a confirmed sig back
     return '5xR2YpKsHaQ9LbVcZmJ7nT3fW4dE1uG6jBoPiNvMqApRzXcKtUwYlSeFhDgRmJ9LnPpTuQwXyAaCbDcEfGh9pL';
   }
 
-  // const { transact } =
-  //   require('@solana-mobile/mobile-wallet-adapter-protocol-web3js');
-  // const { Transaction } = require('@solana/web3.js');
-  // const { Buffer } = require('buffer');
-  //
-  // const tx = Transaction.from(Buffer.from(unsignedTxBase64, 'base64'));
-  // const signed = await transact(async (wallet: Web3MobileWallet) => {
-  //   const result = await wallet.signTransactions({ transactions: [tx] });
-  //   return result[0];
-  // });
-  // return Buffer.from(signed.serialize()).toString('base64');
-
-  throw new Error('MWA not implemented');
+  const tx = Transaction.from(Buffer.from(unsignedTxBase64, 'base64'));
+  const signed = await transact(async (wallet: Web3MobileWallet) => {
+    const result = await wallet.signTransactions({ transactions: [tx] });
+    return result[0];
+  });
+  return Buffer.from(signed.serialize()).toString('base64');
 }
 
 // Cosmetic helper — turn a base58 sig into the short form printed everywhere.
@@ -168,6 +132,5 @@ export function truncateSignature(sig: string, head = 5, tail = 4): string {
   return `${sig.slice(0, head)}…${sig.slice(-tail)}`;
 }
 
-export const _internal = { APP_IDENTITY, USE_STUB };
-// Used as a side-effect import target for `Web3MobileWallet` typing
+export const _internal = { APP_IDENTITY };
 export type { Web3MobileWallet };
