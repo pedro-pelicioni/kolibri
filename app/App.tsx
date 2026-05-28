@@ -1,26 +1,50 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { ScannerScreen } from './src/screens/ScannerScreen';
+import { SessionProvider, useSession } from './src/context/SessionContext';
+import type { RootStackParamList } from './src/navigation/types';
+
+import { LoginScreen } from './src/screens/LoginScreen';
+import { HomeScreen } from './src/screens/HomeScreen';
+import { CreateCertificateScreen } from './src/screens/CreateCertificateScreen';
 import { PlantPassportScreen } from './src/screens/PlantPassportScreen';
-import { mockPassport } from './src/mocks/passport.mock';
+import { ScannerScreen } from './src/screens/ScannerScreen';
 
-// Tiny in-file route switcher so the demo runs zero-deps (no react-navigation
-// required to render the two screens). Replace with @react-navigation/native
-// + native stack once you wire the rest of the app.
-type Route = 'scanner' | 'passport';
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+/**
+ * Routes are gated by session: unauthenticated users only see Login; once
+ * authenticated, the auth stack is replaced atomically by the app stack
+ * (no back-stack pollution from the login screen).
+ */
+function RootNavigator() {
+  const { session } = useSession();
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false, animation: 'fade' }}>
+      {session ? (
+        <>
+          <Stack.Screen name="home" component={HomeScreen} />
+          <Stack.Screen name="create" component={CreateCertificateScreen} />
+          <Stack.Screen name="passport" component={PlantPassportScreen} />
+          <Stack.Screen name="scanner" component={ScannerScreen} />
+        </>
+      ) : (
+        <Stack.Screen name="login" component={LoginScreen} />
+      )}
+    </Stack.Navigator>
+  );
+}
 
 export default function App() {
-  const [route, setRoute] = useState<Route>('scanner');
-
-  if (route === 'passport') {
-    return (
-      <PlantPassportScreen
-        passport={mockPassport}
-        onBack={() => setRoute('scanner')}
-        onShare={() => {/* Share.share({ url: mockPassport.proof.explorerUrl }) */}}
-      />
-    );
-  }
-
-  return <ScannerScreen onScanned={() => setRoute('passport')} />;
+  return (
+    <SafeAreaProvider>
+      <SessionProvider>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </SessionProvider>
+    </SafeAreaProvider>
+  );
 }

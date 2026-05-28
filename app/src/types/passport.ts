@@ -70,6 +70,12 @@ export interface ProofOfExistence {
   explorerUrl: string;
 }
 
+export interface CertificateDocument {
+  name: string;          // "Certificado de Análise (COA)"
+  type: 'pdf' | 'image'; // mime hint
+  url: string;           // shdw:// or https:// — opened via Linking
+}
+
 export interface PlantPassport {
   strainName: string;          // e.g. "Cannatonic CBD"
   cultivarCode: string;        // ≤ 8 chars, e.g. "HEM:CBD1"
@@ -78,6 +84,12 @@ export interface PlantPassport {
   harvestDate: string;         // ISO 8601
   packagedDate: string;        // ISO 8601
   netWeightGrams: number;
+  /** Local require() / remote URL for the product hero image */
+  photoUri: string;
+  /** When the passport itself was issued / anchored */
+  createdAt: string;           // ISO 8601
+  /** Attached documents (COA, ANVISA cert, etc.) */
+  documents: CertificateDocument[];
   cultivator: {
     name: string;
     cnpj: string;              // Brazilian tax id (cultivator)
@@ -89,4 +101,19 @@ export interface PlantPassport {
   proof: ProofOfExistence;
   /** True if every event in the timeline has matched its on-chain PDA */
   verified: boolean;
+}
+
+// ---- Auth / user --------------------------------------------------------
+
+export type UserRole = 'cultivator' | 'dispensary' | 'lab' | 'auditor' | 'admin';
+
+export interface User {
+  email: string;
+  name: string;
+  role: UserRole;
+  dispensaryName: string;
+  cnpj: string;
+  anvisaLicense: string;
+  /** Optional wallet pubkey if the user connected via MWA */
+  walletPublicKey?: string;
 }

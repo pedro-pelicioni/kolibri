@@ -1,469 +1,480 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   StyleSheet,
   SafeAreaView,
   StatusBar,
+  ScrollView,
   Pressable,
+  Image,
+  Linking,
 } from 'react-native';
 import {
   ArrowLeft,
   Share2,
-  Leaf,
-  CalendarDays,
-  Beaker,
+  ChevronDown,
+  ChevronUp,
   MapPin,
-  BadgeCheck,
+  Building2,
 } from 'lucide-react-native';
 
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
 import { spacing, radius } from '../theme/spacing';
 
-import { VerifiedBadge } from '../components/VerifiedBadge';
+import { KolibriLogo } from '../components/KolibriLogo';
+import { Section } from '../components/Section';
+import { DocumentItem } from '../components/DocumentItem';
+import { QRCodeCard } from '../components/QRCodeCard';
+import { ExpansionPanel } from '../components/ExpansionPanel';
+
 import { LabDataCard } from '../components/LabDataCard';
 import { TraceabilityTimeline } from '../components/TraceabilityTimeline';
 import { ProofOfExistenceCard } from '../components/ProofOfExistenceCard';
+import { VerifiedBadge } from '../components/VerifiedBadge';
 
-import type { PlantPassport } from '../types/passport';
+import { truncateSignature } from '../wallet/MobileWalletAdapter';
+import type { ScreenProps } from '../navigation/types';
 
-interface Props {
-  passport: PlantPassport;
-  /** Called when the back chevron is pressed */
-  onBack?: () => void;
-  /** Called when the share icon is pressed */
-  onShare?: () => void;
-}
-
-// ----- helpers ---------------------------------------------------------------
+const THC_LIMIT_PCT = 0.3;
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('pt-BR', {
     day: '2-digit',
-    month: 'short',
-    year: 'numeric',
+    month: '2-digit',
+    year: '2-digit',
   });
 }
 
-// THC compliance threshold per ANVISA RDC 1.015/2026 (max 0.3% w/w).
-const THC_LIMIT_PCT = 0.3;
-
-// ----- screen ----------------------------------------------------------------
-
 /**
- * Digital Plant Passport — the hero screen of Kolibri.
+ * Public passport — Certimine-style layout.
  *
- * Layout (top → bottom):
- *   1. Sticky-feel header w/ back + share
- *   2. Strain hero (name, batch label, big verified badge)
- *   3. Quick-fact strip (harvest, weight, cultivator)
- *   4. Lab Panel — 2×2 LabDataCard grid + COA reference
- *   5. Traceability Timeline (vertical stepper)
- *   6. Proof of Existence card (Solana receipt)
- *
- * Everything is composed from small, reusable components in ../components/.
+ * Top half is the "public face" everyone sees: photo, ID, name, owner,
+ * documents, address, QR. Tap "Faça login para ver mais detalhes" to expand
+ * the dense lab panel + traceability timeline + on-chain proof footer.
  */
-export function PlantPassportScreen({ passport, onBack, onShare }: Props) {
-  const thcCompliant = passport.lab.thcPct < THC_LIMIT_PCT;
+export function PlantPassportScreen({ route, navigation }: ScreenProps<'passport'>) {
+  const { passport } = route.params;
+  const [ownerOpen, setOwnerOpen] = useState(false);
+
+  const verifyUrl = `https://dpo2u.com/kolibri/verify/${passport.batchId}`;
 
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.bg} />
 
-      {/* --- Header bar --- */}
-      <View style={styles.headerBar}>
+      <View style={styles.topBar}>
         <Pressable
-          onPress={onBack}
-          hitSlop={12}
+          onPress={() => navigation.goBack()}
           accessibilityRole="button"
-          accessibilityLabel="Go back"
+          accessibilityLabel="Voltar"
+          hitSlop={12}
         >
           <ArrowLeft size={22} color={colors.textPrimary} strokeWidth={2.2} />
         </Pressable>
-        <Text style={styles.headerTitle}>Digital Plant Passport</Text>
+        <KolibriLogo size="sm" variant="full" />
         <Pressable
-          onPress={onShare}
-          hitSlop={12}
+          onPress={() => Linking.openURL(verifyUrl)}
           accessibilityRole="button"
-          accessibilityLabel="Share passport"
+          accessibilityLabel="Compartilhar"
+          hitSlop={12}
         >
           <Share2 size={20} color={colors.textPrimary} strokeWidth={2.2} />
         </Pressable>
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        {/* ============ Strain Hero ============ */}
-        <View style={styles.hero}>
-          <View style={styles.heroIconWrap}>
-            <Leaf size={20} color={colors.green600} strokeWidth={2.2} />
-          </View>
-          <Text style={styles.heroEyebrow}>Cultivar · {passport.cultivarCode}</Text>
-          <Text style={styles.heroTitle}>{passport.strainName}</Text>
-
-          <View style={styles.heroBatchRow}>
-            <Text style={styles.heroBatchLabel}>BATCH</Text>
-            <Text style={styles.heroBatchValue}>{passport.batchLabel}</Text>
-          </View>
-
-          <View style={styles.heroBadge}>
-            <VerifiedBadge label="Verified Authentic" size="lg" />
-          </View>
-        </View>
-
-        {/* ============ Quick-fact strip ============ */}
-        <View style={styles.quickStrip}>
-          <QuickFact
-            icon={CalendarDays}
-            label="Harvest"
-            value={fmtDate(passport.harvestDate)}
-          />
-          <View style={styles.quickDivider} />
-          <QuickFact
-            icon={Beaker}
-            label="Net weight"
-            value={`${passport.netWeightGrams} g`}
-          />
-          <View style={styles.quickDivider} />
-          <QuickFact
-            icon={MapPin}
-            label="Farm"
-            value={passport.cultivator.farmLocation.split(',')[0]}
-          />
-        </View>
-
-        {/* ============ Section: Lab Panel ============ */}
-        <SectionHeader
-          eyebrow="Certificate of Analysis"
-          title="Lab Panel"
-          right={
-            <View style={styles.coaTag}>
-              <BadgeCheck size={12} color={colors.green600} strokeWidth={2.6} />
-              <Text style={styles.coaTagText}>COA signed</Text>
+        {/* ---- Hero: photo + ID + date ---- */}
+        <View style={styles.heroRow}>
+          <Image source={{ uri: passport.photoUri }} style={styles.heroPhoto} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.eyebrow}>Passaporte de Produto Blockchain</Text>
+            <View style={styles.metaRow}>
+              <Text style={styles.metaLabel}>ID:</Text>
+              <Text style={styles.metaValueMono}>
+                {truncateSignature(passport.proof.txSignature, 4, 4)}
+              </Text>
             </View>
-          }
-        />
-
-        <View style={styles.cardsGrid}>
-          <View style={styles.cardsRow}>
-            <LabDataCard
-              label="CBD %"
-              value={`${passport.lab.cbdPct.toFixed(2)} %`}
-              hint="dominant cannabinoid"
-              tone="positive"
-            />
-            <LabDataCard
-              label="THC %"
-              value={`${passport.lab.thcPct.toFixed(2)} %`}
-              hint={`Limit ${THC_LIMIT_PCT}% · ANVISA RDC 1.015`}
-              tone={thcCompliant ? 'positive' : 'danger'}
-            />
-          </View>
-          <View style={styles.cardsRow}>
-            <LabDataCard
-              label="Total cannabinoids"
-              value={`${passport.lab.totalCannabinoidsPct.toFixed(2)} %`}
-              hint="incl. minor cannabinoids"
-            />
-            <LabDataCard
-              label="Tested by"
-              value={passport.lab.labName.split(' ')[0]}
-              hint={passport.lab.labLicense}
-            />
-          </View>
-
-          {/* Lab compliance line — flat, just text strip */}
-          <View style={styles.complianceStrip}>
-            <ComplianceDot label="Microbiology" pass={passport.lab.microbiology === 'PASS'} />
-            <ComplianceDot label="Heavy metals" pass={passport.lab.heavyMetals === 'PASS'} />
-            <ComplianceDot label="Solvents" pass={passport.lab.residualSolvents === 'PASS'} />
-            <ComplianceDot label="Pesticides" pass={passport.lab.pesticides === 'PASS'} />
+            <View style={styles.metaRow}>
+              <Text style={styles.metaLabel}>Data:</Text>
+              <Text style={styles.metaValue}>{fmtDate(passport.createdAt)}</Text>
+            </View>
           </View>
         </View>
 
-        {/* ============ Section: Traceability Timeline ============ */}
-        <SectionHeader
-          eyebrow="Supply Chain"
-          title="Traceability Timeline"
-        />
+        <View style={styles.divider} />
 
-        <View style={styles.timelineWrap}>
-          <TraceabilityTimeline
-            events={passport.timeline}
-            cluster={passport.proof.network}
-          />
+        {/* ---- Title ---- */}
+        <Text style={styles.title}>
+          {passport.strainName} — {passport.netWeightGrams} (g)
+        </Text>
+
+        {/* ---- Owner card ---- */}
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>Proprietário</Text>
+          <Text style={styles.cardValue}>{passport.cultivator.name}</Text>
+          <Pressable
+            onPress={() => setOwnerOpen((o) => !o)}
+            style={({ pressed }) => [styles.verMaisRow, pressed && { opacity: 0.6 }]}
+            accessibilityRole="button"
+          >
+            <Text style={styles.verMais}>{ownerOpen ? 'Ver menos' : 'Ver mais'}</Text>
+            {ownerOpen ? (
+              <ChevronUp size={14} color={colors.green600} strokeWidth={2.4} />
+            ) : (
+              <ChevronDown size={14} color={colors.green600} strokeWidth={2.4} />
+            )}
+          </Pressable>
+          {ownerOpen && (
+            <View style={styles.ownerDetails}>
+              <DetailRow label="CNPJ" value={passport.cultivator.cnpj} />
+              <DetailRow
+                label="Licença ANVISA"
+                value={passport.cultivator.anvisaLicense}
+              />
+              <DetailRow label="Cultivar" value={passport.cultivarCode} />
+              <DetailRow label="Lote" value={passport.batchLabel} />
+            </View>
+          )}
         </View>
 
-        {/* ============ Section: Proof of Existence ============ */}
-        <SectionHeader eyebrow="Cryptographic Receipt" title="Proof of Existence" />
-        <ProofOfExistenceCard proof={passport.proof} />
+        {/* ---- Documents ---- */}
+        <View style={[styles.card, styles.cardWithBadge]}>
+          <View style={styles.docHeader}>
+            <Text style={styles.cardLabel}>Documentos</Text>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{passport.documents.length}</Text>
+            </View>
+          </View>
+          <View style={{ marginTop: spacing.xs }}>
+            {passport.documents.map((doc, i) => (
+              <View key={doc.url}>
+                {i > 0 && <View style={styles.hairline} />}
+                <DocumentItem doc={doc} />
+              </View>
+            ))}
+          </View>
+        </View>
 
-        {/* Footer fine print */}
+        {/* ---- Address + floating QR ---- */}
+        <View style={styles.addressBlock}>
+          <View style={[styles.card, { paddingRight: 140 }]}>
+            <View style={styles.addressTitleRow}>
+              <MapPin size={14} color={colors.textSecondary} strokeWidth={2.2} />
+              <Text style={styles.cardLabel}>Endereço</Text>
+            </View>
+            <Text style={[styles.cardValue, { fontSize: 14 }]}>
+              {passport.cultivator.farmLocation}
+            </Text>
+            <View style={styles.dispensaryLine}>
+              <Building2 size={12} color={colors.textMuted} strokeWidth={2} />
+              <Text style={styles.dispensaryText} numberOfLines={1}>
+                {passport.cultivator.name}
+              </Text>
+            </View>
+          </View>
+
+          {/* Floating QR — right-edge, vertically centred */}
+          <View style={styles.qrFloat}>
+            <QRCodeCard value={verifyUrl} size={108} />
+          </View>
+        </View>
+
+        <View style={styles.divider} />
+
+        {/* ---- Login-gated details ---- */}
+        <View style={styles.loginPrompt}>
+          <Text style={styles.loginPromptText}>
+            Faça login para ver mais detalhes
+          </Text>
+        </View>
+
+        <ExpansionPanel
+          label="Ver detalhes técnicos do lote"
+          labelExpanded="Ocultar detalhes"
+        >
+          {/* Verified badge */}
+          <View style={{ alignItems: 'center', marginBottom: spacing.sm }}>
+            <VerifiedBadge label="Autêntico · verificado on-chain" />
+          </View>
+
+          {/* Lab grid */}
+          <View>
+            <Text style={styles.detailsHeading}>Painel laboratorial</Text>
+            <View style={styles.labRow}>
+              <LabDataCard
+                label="CBD %"
+                value={`${passport.lab.cbdPct.toFixed(2)} %`}
+                hint="dominante"
+                tone="positive"
+              />
+              <LabDataCard
+                label="THC %"
+                value={`${passport.lab.thcPct.toFixed(2)} %`}
+                hint={`limite ${THC_LIMIT_PCT}%`}
+                tone={passport.lab.thcPct < THC_LIMIT_PCT ? 'positive' : 'danger'}
+              />
+            </View>
+            <View style={[styles.labRow, { marginTop: spacing.md }]}>
+              <LabDataCard
+                label="Total cannabinoides"
+                value={`${passport.lab.totalCannabinoidsPct.toFixed(2)} %`}
+              />
+              <LabDataCard
+                label="Laboratório"
+                value={passport.lab.labName.split(' ')[0]}
+                hint={passport.lab.labLicense}
+              />
+            </View>
+          </View>
+
+          {/* Timeline */}
+          <View>
+            <Text style={styles.detailsHeading}>Linha do tempo</Text>
+            <TraceabilityTimeline
+              events={passport.timeline}
+              cluster={passport.proof.network}
+            />
+          </View>
+
+          {/* On-chain proof */}
+          <ProofOfExistenceCard proof={passport.proof} />
+        </ExpansionPanel>
+
         <Text style={styles.fineprint}>
-          Cultivated by {passport.cultivator.name} (CNPJ {passport.cultivator.cnpj})
-          · License {passport.cultivator.anvisaLicense}.{'\n'}
-          Anchored on Solana via Kolibri Compliance Registry.
+          Documento digital emitido por {passport.cultivator.name} · CNPJ{' '}
+          {passport.cultivator.cnpj}. Anchored on Solana via Kolibri Compliance
+          Registry.
         </Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-// ----- local subcomponents ---------------------------------------------------
-
-function QuickFact({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
-  label: string;
-  value: string;
-}) {
+function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <View style={styles.quickFact}>
-      <Icon size={14} color={colors.textMuted} strokeWidth={2.2} />
-      <Text style={styles.quickLabel}>{label}</Text>
-      <Text style={styles.quickValue} numberOfLines={1}>
-        {value}
-      </Text>
+    <View style={styles.detailRow}>
+      <Text style={styles.detailLabel}>{label}</Text>
+      <Text style={styles.detailValue} numberOfLines={1}>{value}</Text>
     </View>
   );
 }
-
-function SectionHeader({
-  eyebrow,
-  title,
-  right,
-}: {
-  eyebrow: string;
-  title: string;
-  right?: React.ReactNode;
-}) {
-  return (
-    <View style={styles.sectionHeader}>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.sectionEyebrow}>{eyebrow}</Text>
-        <Text style={styles.sectionTitle}>{title}</Text>
-      </View>
-      {right}
-    </View>
-  );
-}
-
-function ComplianceDot({ label, pass }: { label: string; pass: boolean }) {
-  return (
-    <View style={styles.complianceItem}>
-      <View
-        style={[
-          styles.complianceDot,
-          { backgroundColor: pass ? colors.green500 : colors.red500 },
-        ]}
-      />
-      <Text style={styles.complianceLabel}>{label}</Text>
-    </View>
-  );
-}
-
-// ----- styles ----------------------------------------------------------------
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: colors.bgMuted,
-  },
-  headerBar: {
+  safe: { flex: 1, backgroundColor: colors.bg },
+  topBar: {
     height: 52,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.xxl,
-    backgroundColor: colors.bg,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
-  headerTitle: {
-    ...typography.h3,
-    color: colors.textPrimary,
-    fontSize: 15,
-  },
-  scrollContent: {
+  scroll: {
     paddingHorizontal: spacing.xxl,
-    paddingBottom: spacing.section,
     paddingTop: spacing.xl,
-    gap: spacing.xl,
+    paddingBottom: spacing.section,
+    gap: spacing.lg,
   },
 
-  // -- Hero -------------------------------------------------------------------
-  hero: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
-    padding: spacing.xxl,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  heroIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.green50,
+  // Hero
+  heroRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.lg,
+    gap: spacing.lg,
   },
-  heroEyebrow: {
-    ...typography.caption,
-    color: colors.brand700,
-    marginBottom: spacing.xs,
+  heroPhoto: {
+    width: 80,
+    height: 80,
+    borderRadius: radius.md,
+    backgroundColor: colors.surfaceAlt,
   },
-  heroTitle: {
-    ...typography.h1,
-    color: colors.textPrimary,
-    fontSize: 30,
-    marginBottom: spacing.md,
+  eyebrow: {
+    ...typography.body,
+    color: colors.textSecondary,
+    fontSize: 13,
+    marginBottom: 6,
   },
-  heroBatchRow: {
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  heroBatchLabel: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  heroBatchValue: {
-    ...typography.mono,
-    color: colors.textPrimary,
-    fontSize: 13,
-  },
-  heroBadge: {
-    marginTop: spacing.sm,
-  },
-
-  // -- Quick strip ------------------------------------------------------------
-  quickStrip: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-  },
-  quickFact: {
-    flex: 1,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    alignItems: 'flex-start',
-    gap: 2,
-  },
-  quickLabel: {
-    ...typography.caption,
-    color: colors.textMuted,
-    fontSize: 9,
     marginTop: 2,
   },
-  quickValue: {
+  metaLabel: {
+    ...typography.body,
+    color: colors.textMuted,
+    fontSize: 12,
+  },
+  metaValue: {
     ...typography.bodyStrong,
     color: colors.textPrimary,
     fontSize: 13,
-    marginTop: 2,
   },
-  quickDivider: {
-    width: StyleSheet.hairlineWidth,
-    alignSelf: 'stretch',
-    backgroundColor: colors.border,
-  },
-
-  // -- Section headers --------------------------------------------------------
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: spacing.sm,
-  },
-  sectionEyebrow: {
-    ...typography.caption,
-    color: colors.brand700,
-  },
-  sectionTitle: {
-    ...typography.h2,
+  metaValueMono: {
+    ...typography.mono,
     color: colors.textPrimary,
-    marginTop: 2,
-  },
-
-  // -- Lab grid ---------------------------------------------------------------
-  cardsGrid: {
-    gap: spacing.md,
-    marginTop: -spacing.sm,
-  },
-  cardsRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  coaTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: colors.green100,
-    borderRadius: radius.pill,
-    paddingVertical: 4,
-    paddingHorizontal: spacing.sm,
-  },
-  coaTagText: {
-    ...typography.caption,
-    color: colors.green600,
-    fontSize: 9,
-  },
-  complianceStrip: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  complianceItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  complianceDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  complianceLabel: {
-    ...typography.body,
-    color: colors.textSecondary,
     fontSize: 12,
   },
 
-  // -- Timeline ---------------------------------------------------------------
-  timelineWrap: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: spacing.xxl,
-    marginTop: -spacing.sm,
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border,
+    marginVertical: spacing.sm,
   },
 
-  // -- Footer fine print ------------------------------------------------------
+  // Title
+  title: {
+    ...typography.h1,
+    color: colors.textPrimary,
+    fontSize: 26,
+  },
+
+  // Cards
+  card: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.xl,
+  },
+  cardWithBadge: { position: 'relative' },
+  cardLabel: {
+    ...typography.caption,
+    color: colors.textMuted,
+    fontSize: 10,
+    marginBottom: spacing.xs,
+  },
+  cardValue: {
+    ...typography.bodyStrong,
+    color: colors.textPrimary,
+    fontSize: 16,
+  },
+  verMaisRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: spacing.sm,
+    alignSelf: 'flex-start',
+  },
+  verMais: {
+    ...typography.body,
+    color: colors.green600,
+    fontSize: 13,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+  ownerDetails: {
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
+    gap: spacing.sm,
+  },
+  detailRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  detailLabel: {
+    ...typography.caption,
+    color: colors.textMuted,
+    fontSize: 10,
+  },
+  detailValue: {
+    ...typography.body,
+    color: colors.textPrimary,
+    fontSize: 13,
+    flexShrink: 1,
+    marginLeft: spacing.md,
+  },
+
+  // Documents
+  docHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  badge: {
+    minWidth: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: colors.green500,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 6,
+  },
+  badgeText: {
+    ...typography.caption,
+    color: colors.textInverse,
+    fontSize: 10,
+  },
+  hairline: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border,
+  },
+
+  // Address + QR
+  addressBlock: {
+    position: 'relative',
+  },
+  addressTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: spacing.xs,
+  },
+  dispensaryLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: spacing.sm,
+  },
+  dispensaryText: {
+    ...typography.caption,
+    color: colors.textMuted,
+    fontSize: 11,
+    flexShrink: 1,
+  },
+  qrFloat: {
+    position: 'absolute',
+    right: -spacing.md,
+    top: '50%',
+    marginTop: -68,
+    transform: [{ rotate: '-6deg' }],
+  },
+
+  // Login prompt
+  loginPrompt: {
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+  },
+  loginPromptText: {
+    ...typography.body,
+    color: colors.textSecondary,
+    fontSize: 13,
+    fontStyle: 'italic',
+  },
+
+  // Details inside expansion
+  detailsHeading: {
+    ...typography.caption,
+    color: colors.brand700,
+    marginBottom: spacing.md,
+  },
+  labRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+
   fineprint: {
     ...typography.body,
     color: colors.textMuted,
     fontSize: 11,
-    lineHeight: 16,
     textAlign: 'center',
     marginTop: spacing.lg,
+    lineHeight: 16,
   },
 });
