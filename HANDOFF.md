@@ -303,7 +303,6 @@ Script E2E completo de referência: `/root/DPO2U/packages/kolibri-gateway/script
 3. **Erro de auth** — chequa que o agent_name está pré-registrado em agent-registry (use `register-agent.ts` em `kolibri-integration/sample/`)
 4. **Erro de payload** — schema JSON em `docs/event-schemas.md`; valida com o canonical-json do gateway
 
-Email Chairman: fredericosanntana@gmail.com  
 WhatsApp do Chairman: (você já tem)  
 GitHub issue: https://github.com/fredericosanntana/dpo2u-solana/issues
 

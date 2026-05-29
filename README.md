@@ -2,7 +2,7 @@
 
 **Rastreabilidade da planta seed-to-sale, no Solana Seeker.**
 
-ERP móvel para dispensários de cannabis no Brasil — LGPD + ANVISA RDC 1.015/2026 + SNGPC. Cada evento de vida da planta (do plantio à dispensação) é anchorado on-chain via [DPO2U](https://dpo2u.com).
+ERP móvel para dispensários de cannabis no Brasil — LGPD + ANVISA RDC 1.015/2026 + SNGPC. Cada evento de vida da planta (do plantio à dispensação) é anchorado on-chain.
 
 ---
 
@@ -10,14 +10,14 @@ ERP móvel para dispensários de cannabis no Brasil — LGPD + ANVISA RDC 1.015/
 
 🟡 **Preparação inicial.** O backend HTTP, programa Solana e SDK já estão prontos e em produção. Falta o app mobile React Native — escopo deste repositório.
 
-| Componente | Status | Quem |
-|---|---|---|
-| Programa Solana (`compliance-registry-pinocchio` selector 0x06) | ✅ LIVE devnet | DPO2U |
-| TypeScript SDK (`@dpo2u/client-sdk`) | ✅ Shipped | DPO2U |
-| Backend HTTP (`kolibri-gateway`) | ✅ LIVE em `https://dpo2u.com/kolibri` | DPO2U |
-| Compliance MCP (DPIA, ROPA, recall, audit) | ✅ LIVE em `mcp.dpo2u.com` | DPO2U |
-| **App React Native (este repo)** | ⏳ A começar | **Pedro Pelicioni** |
-| Mainnet deploy | ⏳ Pós-DPIA + ROPA + dry-run | Conjunto |
+| Componente | Status |
+|---|---|
+| Programa Solana (`compliance-registry-pinocchio` selector 0x06) | ✅ LIVE devnet |
+| TypeScript SDK (`@dpo2u/client-sdk`) | ✅ Shipped |
+| Backend HTTP (`kolibri-gateway`) | ✅ LIVE em `https://dpo2u.com/kolibri` |
+| Compliance MCP (DPIA, ROPA, recall, audit) | ✅ LIVE em `mcp.dpo2u.com` |
+| **App React Native (este repo)** | ⏳ A começar |
+| Mainnet deploy | ⏳ Pós-DPIA + ROPA + dry-run |
 
 ---
 
@@ -28,7 +28,7 @@ Leia **[HANDOFF.md](./HANDOFF.md)** — quickstart Day-0 com setup React Native 
 Documentação completa em:
 - **[docs/MOBILE.md](./docs/MOBILE.md)** — guia de integração mobile (SIWS, MWA, fluxo de telas, roadmap de 6 sprints)
 - **[docs/event-schemas.md](./docs/event-schemas.md)** — schemas JSON canônicos dos 15 tipos de evento da planta
-- **[docs/PRD-v1.2-Section-7.4-DPO2U-MCP.md](./docs/PRD-v1.2-Section-7.4-DPO2U-MCP.md)** — texto pronto pra anexar no seu PRD v1.2 (Seção 7.4 + DPA outline)
+- **[PRD v1.2 — Seção 7.4 (MCP de compliance) + DPA outline](./docs/PRD-v1.2-Section-7.4-DPO2U-MCP.md)** — texto pronto pra anexar no seu PRD v1.2
 
 ---
 
@@ -90,27 +90,8 @@ MCP:             https://mcp.dpo2u.com
 
 ---
 
-## Modelo comercial
-
-**DPO2U disponibiliza tudo open ao Kolibri** — sem licença, sem revenue share. Use à vontade. Stack completo:
-
-- 4 programas Solana (compliance-registry-pinocchio + agent-registry + legal-source-manifest + consent-manager)
-- TypeScript SDK tipado (`@dpo2u/client-sdk`)
-- 70+ MCP tools (compliance, DPIA, audit) via `mcp.dpo2u.com`
-- Backend HTTP completo (`kolibri-gateway`) já deployed em produção
-- Postgres migrations
-- DPA LGPD operador (modelo pronto)
-- Worker de reconciliação banco↔chain
-
-Repos de referência:
-- [`fredericosanntana/dpo2u-solana`](https://github.com/fredericosanntana/dpo2u-solana) — programa + SDK
-- [`fredericosanntana/DPO2U`](https://github.com/fredericosanntana/DPO2U) — backend gateway + MCP
-
----
-
 ## Contato
 
 - **Pedro Pelicioni** — dono deste repo, dev do app
-- **Frederico Santana** (DPO2U) — fredericosanntana@gmail.com — backend + on-chain + compliance
 
 Decisões fechadas e plano técnico completo: ver [HANDOFF.md](./HANDOFF.md).
