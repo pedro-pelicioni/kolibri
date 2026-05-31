@@ -80,3 +80,30 @@ lib-cov/
 
 # ---- Auto-generated API types (regenerate via openapi-typescript) ----
 src/api.d.ts
+
+# Environment & Secrets (AIOX)
+*.key
+
+# Dependencies (AIOX)
+node_modules
+
+# Build & Logs (AIOX)
+*.log
+logs/
+
+# IDE & OS (AIOX)
+Thumbs.db
+*.swp
+
+# AIOX Local (AIOX)
+.aiox-core/local/
+.claude/settings.local.json
+.aiox/install-log.txt
+.gemini/
+.claude/
+.github/
+.antigravity/
+.cursor/
+.codex/
+.aiox-core/
+.kimi/
