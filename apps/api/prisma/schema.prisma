@@ -1,0 +1,87 @@
+// Kolibri API — schema Postgres (Prisma).
+// PoE: on-chain só hashes; payload completo + PII (sempre como hash) ficam aqui.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Dispensário = usuário do MVP (1 wallet = 1 dispensário).
+model Dispensary {
+  id           String   @id @default(cuid())
+  walletPubkey String   @unique
+  name         String?
+  cnpj         String?
+  createdAt    DateTime @default(now())
+  batches      Batch[]
+}
+
+/// Planta/lote. `id` é o ULID (mesmo valor que vira [u8;16] no seed do PDA).
+model Batch {
+  id              String     @id
+  dispensaryId    String
+  dispensary      Dispensary @relation(fields: [dispensaryId], references: [id])
+  cultivarCode    String
+  cultivarFull    String?
+  genotype        String?
+  originEventType Int
+  status          Int        @default(0) // 0=Active 1=Recalled 2=Destroyed
+  imageUri        String?
+
+  // Referências on-chain (preenchidas pelo worker de ancoragem)
+  cluster       String  @default("devnet")
+  programId     String?
+  pda           String?
+  asset         String? // NFT Metaplex Core
+  registerTxSig String?
+  anchoredAt    DateTime?
+
+  createdAt DateTime @default(now())
+  events    Event[]
+
+  @@index([dispensaryId])
+}
+
+/// Evento do ciclo de vida (1..15). `canonicalJson` é o string exato que foi hasheado.
+model Event {
+  id            String    @id @default(cuid())
+  batchId       String
+  batch         Batch     @relation(fields: [batchId], references: [id])
+  eventType     Int
+  payloadJson   Json
+  canonicalJson String
+  payloadHash   String
+  storageUri    String
+  index         Int
+  solanaPda     String?
+  solanaTxSig   String?
+  anchoredAt    DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([batchId])
+  @@index([anchoredAt])
+}
+
+/// Upload de foto/COA (storage local no MVP).
+model Upload {
+  id          String   @id @default(cuid())
+  storageUri  String
+  sha256Hex   String
+  bytes       Int
+  contentType String
+  createdAt   DateTime @default(now())
+}
+
+/// Nonce SIWS single-use (challenge → verify).
+model AuthNonce {
+  nonce     String    @id
+  pubkey    String?
+  inputJson Json
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}

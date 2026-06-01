@@ -3,27 +3,22 @@
 .AppleDouble
 .LSOverride
 
-# ---- Node / React Native ----
+# ---- Node / pnpm / Turbo ----
 node_modules/
+.pnpm-store/
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 *.tsbuildinfo
+tsconfig.tsbuildinfo
+.turbo/
 
-# CocoaPods
-ios/Pods/
-ios/build/
-
-# Metro
-.metro-health-check*
-.metro-cache/
-
-# Expo (if used)
-.expo/
-.expo-shared/
+# ---- Build outputs ----
 dist/
-web-build/
+build/
+.vite/
+coverage/
+lib-cov/
+.nyc_output/
 
 # ---- Env / secrets ----
 .env
@@ -33,22 +28,29 @@ web-build/
 *.p12
 *.keystore
 secrets.json
-google-services.json
-GoogleService-Info.plist
+# Solana keypairs (service / authority) — never commit
+.keys/
+**/service-keypair.json
+**/authority-keypair.json
+id.json
 
-# ---- TypeScript ----
-*.d.ts.map
-tsconfig.tsbuildinfo
+# ---- Anchor / Rust ----
+programs/target/
+programs/.anchor/
+programs/**/*.rs.bk
+test-ledger/
+.anchor/
+
+# ---- Prisma ----
+# (migrations ARE committed; generated client lives in node_modules)
+
+# ---- Uploads (local storage MVP) ----
+apps/api/uploads/
 
 # ---- IDE ----
 .vscode/
+.idea/
 .history/
 
-# ---- Build artifacts ----
-coverage/
-lib-cov/
-.nyc_output/
-
-# ---- Auto-generated API types (regenerate via openapi-typescript) ----
-src/api.d.ts
-
+# ---- Claude Code (config pessoal/local) ----
+.claude/settings.local.json

@@ -1,0 +1,45 @@
+{
+  "name": "@kolibri/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo \"(no lint)\"",
+    "clean": "rm -rf dist .turbo",
+    "prisma": "prisma"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.2",
+    "@fastify/helmet": "^13.0.1",
+    "@fastify/jwt": "^9.0.4",
+    "@fastify/multipart": "^9.0.3",
+    "@fastify/rate-limit": "^10.2.2",
+    "@fastify/static": "^8.0.4",
+    "@fastify/swagger": "^9.4.2",
+    "@fastify/swagger-ui": "^5.2.1",
+    "@kolibri/sdk": "workspace:*",
+    "@kolibri/types": "workspace:*",
+    "@metaplex-foundation/mpl-core": "^1.1.1",
+    "@metaplex-foundation/umi": "^1.0.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.0.0",
+    "@prisma/client": "^6.2.1",
+    "@solana/wallet-standard-features": "^1.3.0",
+    "@solana/wallet-standard-util": "^1.1.2",
+    "@solana/web3.js": "^1.98.0",
+    "dotenv": "^16.4.7",
+    "fastify": "^5.2.1",
+    "fastify-plugin": "^5.0.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "pino-pretty": "^13.0.0",
+    "prisma": "^6.2.1",
+    "tsx": "^4.19.2",
+    "tweetnacl": "^1.0.3",
+    "typescript": "^5.7.3"
+  }
+}

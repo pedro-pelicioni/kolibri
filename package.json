@@ -1,0 +1,41 @@
+{
+  "name": "kolibri",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Kolibri — rastreabilidade seed-to-sale de cannabis medicinal com Proof-of-Existence na Solana (web)",
+  "packageManager": "pnpm@11.5.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\" --ignore-path .gitignore",
+    "anchor:build": "cd programs && anchor build",
+    "anchor:test": "cd programs && anchor test",
+    "anchor:deploy": "cd programs && anchor deploy --provider.cluster devnet",
+    "anchor:keys": "cd programs && anchor keys list",
+    "deploy:devnet": "bash scripts/deploy-devnet.sh",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter @kolibri/api exec prisma migrate dev",
+    "db:generate": "pnpm --filter @kolibri/api exec prisma generate"
+  },
+  "devDependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@solana/web3.js": "^1.98.0",
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.5",
+    "bn.js": "^5.2.1",
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
+    "prettier": "^3.4.2",
+    "ts-mocha": "^10.0.0",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  }
+}
