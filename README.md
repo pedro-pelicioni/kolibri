@@ -2,7 +2,7 @@
 
 **Rastreabilidade seed-to-sale da planta de cannabis medicinal — web, com Proof-of-Existence verificável na Solana.**
 
-Plataforma de gestão e compliance para **dispensários** de cannabis medicinal no Brasil (tema LGPD + ANVISA RDC 1.015/2026 + SNGPC). Cada evento do ciclo de vida da planta — do nascimento à dispensação — é canonicalizado, hasheado (sha256) e **ancorado on-chain** na Solana. Cada planta vira um **NFT** (o certificado), e qualquer pessoa abre o **passaporte público** (estilo Minespider) via QR e **verifica a prova on-chain**, sem nunca expor dados sensíveis (PII fica off-chain, só hash trafega).
+Plataforma de gestão e compliance para **dispensários** de cannabis medicinal no Brasil (tema LGPD + ANVISA RDC 1.015/2026 + SNGPC). Cada evento do ciclo de vida da planta — do nascimento à dispensação — é canonicalizado, hasheado (sha256) e **ancorado on-chain** na Solana. Cada planta vira um **NFT** (o certificado), e qualquer pessoa abre o **passaporte público** (Digital Product Passport) via QR e **verifica a prova on-chain**, sem nunca expor dados sensíveis (PII fica off-chain, só hash trafega).
 
 > Trilha **Solana** · Hackanation 2026 (TokenNation) · **Repo:** https://github.com/pedro-pelicioni/kolibri
 
@@ -40,7 +40,7 @@ Este repositório é o **núcleo de rastreabilidade on-chain** do Kolibri (o pil
 - **Auth de dispensário** via Sign-In With Solana (SIWS) + JWT.
 - **Registro da planta** (origem/genética) → cria um `Batch` PDA on-chain + minta um **NFT Metaplex Core** (o certificado).
 - **Eventos do ciclo de vida** (15 tipos: do plantio à dispensação) — cada um ancora `sha256(payload canônico)` on-chain. PII (CPF/CNS) **nunca** vai on-chain — só `sha256(valor)`, hasheado no navegador.
-- **Passaporte público** (`/passport/:id`, alvo de QR) estilo Minespider: cartão + gauges + selos de compliance + abas + NFT + **"Verificar on-chain"** (recomputa o sha256 no navegador e confere a conta `Batch`).
+- **Passaporte público** (`/passport/:id`, alvo de QR) no padrão **Digital Product Passport (DPP)**: cartão + gauges + selos de compliance + abas + NFT + **"Verificar on-chain"** (recomputa o sha256 no navegador e confere a conta `Batch`).
 - **Ancoragem server-custody**: o backend assina/paga (1 clique, sem popup por evento); o SIWS + o NFT amarram a identidade do dispensário.
 
 ---

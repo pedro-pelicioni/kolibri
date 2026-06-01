@@ -65,7 +65,7 @@ export interface BadgeDTO {
   tone: BadgeTone;
 }
 
-/** Read-model público do Digital Product Passport (estilo Minespider). */
+/** Read-model público do Digital Product Passport (DPP). */
 export interface PassportDTO {
   batch: BatchDTO;
   events: EventDTO[];
