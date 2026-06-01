@@ -13,6 +13,8 @@ const schema = z.object({
   SOLANA_RPC_URL: z.string().default("https://api.devnet.solana.com"),
   PROGRAM_ID: z.string().optional(),
   SERVICE_KEYPAIR_PATH: z.string().default(".keys/service-keypair.json"),
+  // alternativa ao arquivo: cole o array do id.json aqui (ideal p/ Render/cloud)
+  SERVICE_KEYPAIR_JSON: z.string().optional(),
   PUBLIC_PASSPORT_BASE_URL: z.string().default("http://localhost:5173/passport"),
   API_PUBLIC_URL: z.string().default("http://localhost:8080"),
   UPLOAD_DIR: z.string().default("uploads"),

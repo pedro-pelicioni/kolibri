@@ -14,7 +14,12 @@ import { env } from "../env.js";
 let _service: Keypair | null = null;
 export function serviceKeypair(): Keypair {
   if (_service) return _service;
-  const raw = JSON.parse(readFileSync(env.SERVICE_KEYPAIR_PATH, "utf8")) as number[];
+  // Render/cloud: lê de SERVICE_KEYPAIR_JSON (env). Local: do arquivo (SERVICE_KEYPAIR_PATH).
+  const raw = (
+    env.SERVICE_KEYPAIR_JSON
+      ? JSON.parse(env.SERVICE_KEYPAIR_JSON)
+      : JSON.parse(readFileSync(env.SERVICE_KEYPAIR_PATH, "utf8"))
+  ) as number[];
   _service = Keypair.fromSecretKey(Uint8Array.from(raw));
   return _service;
 }
