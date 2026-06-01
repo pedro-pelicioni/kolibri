@@ -43,7 +43,7 @@ Três garantias:
 | **Código em um único repositório GitHub público** (contracts + back-end + frontend) | ✅ este monorepo — `programs/` + `apps/api` + `apps/web` |
 | **Frontend com link público** (opcional, agrega valor) | ✅ **no ar no Render** (API + Postgres + web) |
 | **Projeto publicado na Taikai** (não-draft) | ✅ trilha Solana, visível a todos |
-| **Vídeo 3–4 min (YouTube)** | ✅ [video da do pitch - feito pelo CEO Vitor Emanuel](https://youtu.be/7TKv1oENYjc?si=Of9uJ93uEouD0crd) |
+| **Vídeo 3–4 min (YouTube)** | ✅ [video do pitch - feito pelo CEO Vitor Emanuel](https://youtu.be/7TKv1oENYjc?si=Of9uJ93uEouD0crd) |
 | **Pitch + transação ao vivo** | ✅ "Registrar planta" no app **É** a transação demonstrável (ancora + minta on-chain) |
 
 ---
