@@ -1,10 +1,27 @@
-# Kolibri 🌱
+![Kolibri Labs](docs/cover.png)
 
-**Rastreabilidade seed-to-sale da planta de cannabis medicinal — web, com Proof-of-Existence verificável na Solana.**
+# Kolibri
 
-Plataforma de gestão e compliance para **dispensários** de cannabis medicinal no Brasil (tema LGPD + ANVISA RDC 1.015/2026 + SNGPC). Cada evento do ciclo de vida da planta — do nascimento à dispensação — é canonicalizado, hasheado (sha256) e **ancorado on-chain** na Solana. Cada planta vira um **NFT** (o certificado), e qualquer pessoa abre o **passaporte público** (Digital Product Passport) via QR e **verifica a prova on-chain**, sem nunca expor dados sensíveis (PII fica off-chain, só hash trafega).
+**Rastreabilidade de ponta a ponta para cannabis medicinal — com Proof-of-Existence verificável na Solana.**
+
+Kolibri é uma plataforma vertical de **gestão e compliance** para dispensários e associações de cannabis medicinal no Brasil (LGPD + ANVISA RDC 1.015/2026 + SNGPC), sobre três pilares: **rastreabilidade imutável**, **privacidade por design** e **eficiência operacional**.
+
+Este repositório entrega o **núcleo de rastreabilidade + Proof-of-Existence**: cada evento — do nascimento da planta à dispensação ao paciente — é registrado de forma **verificável e à prova de adulteração** na Solana, sem nunca expor dados sensíveis.
 
 > Trilha **Solana** · Hackanation 2026 (TokenNation) · **Repo:** https://github.com/pedro-pelicioni/kolibri
+
+---
+
+## 🔐 Proof-of-Existence (PoE) — o que é e por quê
+
+Cada evento crítico (registro de origem, ato dispensador, recall…) gera um **commitment criptográfico** — o `sha256` do payload canônico — **ancorado on-chain** na Solana. O dado completo (com PII) fica **off-chain e cifrado**; on-chain trafega **só o hash + a referência de storage**.
+
+Três garantias:
+1. **Imutável & à prova de adulteração** — o registro on-chain é permanente; ninguém reescreve o histórico depois (nem o próprio dispensário).
+2. **Auditável publicamente** — a ANVISA (ou qualquer um) recomputa o `sha256` do payload e confere contra o hash on-chain, direto no explorer — procedência provada **sem confiar no operador**.
+3. **Privacidade preservada** — como só o hash vai on-chain, nenhum dado de paciente (CPF/CNS/nome) é exposto.
+
+É o que o passaporte público faz no botão **"Verificar on-chain"**: recomputa o hash no navegador e confere com a blockchain.
 
 ---
 
@@ -24,7 +41,7 @@ Plataforma de gestão e compliance para **dispensários** de cannabis medicinal 
 | **Endereço público do contrato** | ✅ [`Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF`](https://explorer.solana.com/address/Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF?cluster=devnet) |
 | **Contrato verificado em explorador público** | ✅ **build verificável** (bate byte-a-byte com o repo público) + **PDA de verificação on-chain** |
 | **Código em um único repositório GitHub público** (contracts + back-end + frontend) | ✅ este monorepo — `programs/` + `apps/api` + `apps/web` |
-| **Frontend com link público** (opcional, agrega valor) | ✅ **no ar no Render** (API + Postgres + web — ver [Deploy](#deploy-na-nuvem-render)) |
+| **Frontend com link público** (opcional, agrega valor) | ✅ **no ar no Render** (API + Postgres + web) |
 | **Projeto publicado na Taikai** (não-draft) | ✅ trilha Solana, visível a todos |
 | **Vídeo 3–4 min (YouTube)** | ⬜ a gravar (roteiro: login → registrar planta → ancoragem → NFT → passaporte → verify) |
 | **Pitch + transação ao vivo** | ✅ "Registrar planta" no app **É** a transação demonstrável (ancora + minta on-chain) |
@@ -83,13 +100,31 @@ kolibri/
 | `set_asset(asset)` | Vincula o NFT Metaplex Core (mintado off-chain via umi) ao lote. |
 
 ---
+## 🗺️ Roadmap — próximas fases
+
+O MVP deste repo entrega a **rastreabilidade + PoE**. As próximas fases (após validação operacional com 2–3 dispensários âncora):
+
+**Produto & infraestrutura**
+- **Mainnet** — programa em produção na Solana mainnet (+ selo *Verified* no Solscan, que é mainnet-only).
+- **ERP com privacidade por design** — dados sensíveis do paciente (nome, CPF, endereço, histórico) cifrados em coluna no Postgres com **AES-256**, chave dedicada por dispensário via **AWS KMS**. Módulo fiscal (NF-e) roda em **rede isolada** do sistema operacional — os dois nunca se tocam.
+- **NF-e + SNGPC automatizados** — escrituração SNGPC em até 24h (com retry + alerta ao farmacêutico RT); NF-e em segundos.
+- **Pagamentos confidenciais via Cloak Protocol** — transferências *shielded* com provas ZK (Groth16) na Solana: nem o valor nem as contrapartes ficam visíveis on-chain. O dispensário recebe, o paciente paga — ninguém mais vê.
+- **App nativo** — aplicativo mobile para a dispensação em balcão.
+
+**Token & DeFi — TGE previsto para nov/2026**
+- **Token KNECT** (SPL Token-2022) — utility token com **lastro em Bitcoin crescente** (25% da receita compra cbBTC), supply fixo de **1 bilhão**, sem emissão adicional (split 25% KBR / 25% burn / 35% yield / 15% fundo).
+- **Kolibri Credit Pool** — crédito DeFi B2B para dispensários usando o **histórico on-chain como score** (Kolibri Credit Score), em tranches Senior/Mezzanine/Junior, **6–18% a.a.** (vs 8–25% do mercado).
+- TGE quando os dispensários âncora já estiverem em produção com dados reais.
+
+---
+
 ## Decisões & escopo
 
 - **Server-custody** na ancoragem (UX de demo + confiabilidade); identidade via SIWS + NFT.
 - **NFT mintado pela API (umi)** + vinculado on-chain por `set_asset` — robusto, sem CPI Rust frágil.
 - **Anchor 0.32.1** 
 - PoE com **sha256** (canonical JSON estilo JCS); PII sempre como hash. Storage de uploads local no MVP (IPFS/Shadow são evolução).
-- **Fora deste MVP** (visão/Fase 2): Cloak (pagamentos shielded), NF-e/SNGPC automatizados, token KNECT.
+- **Fora deste MVP** (ver Roadmap acima): mainnet, Cloak (pagamentos shielded), NF-e/SNGPC, app nativo, token KNECT + Credit Pool.
 
 ## Status técnico
 

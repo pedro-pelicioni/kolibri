@@ -1,6 +1,7 @@
-# Screenshots do app
+# Imagens do README
 
-Imagens usadas no README principal. Salve aqui com **estes nomes exatos**:
+Salve estes arquivos (caminhos a partir da raiz do repo) com **estes nomes exatos**:
 
-- **`01-login.png`** — tela de login + tutorial guiado pros juízes
-- **`02-passaporte.png`** — passaporte público (DPP) com gauges, selos de compliance e botão "Verificar on-chain"
+- **`docs/cover.png`** — banner "KOLIBRI LABS" (capa do README)
+- **`docs/screenshots/01-login.png`** — tela inicial / login + tutorial guiado
+- **`docs/screenshots/02-passaporte.png`** — passaporte público (DPP) com gauges, selos de compliance e "Verificar on-chain"
