@@ -3,11 +3,8 @@
 # SERVICE_KEYPAIR_JSON (o array do ~/.config/solana/id.json) no serviço kolibri-api.
 # Docs: https://render.com/docs/blueprint-spec
 
-databases:
-  - name: kolibri-db
-    databaseName: kolibri
-    user: kolibri
-    plan: free
+# DB: usamos um Postgres externo grátis (Neon/Supabase) p/ não esbarrar no limite
+# de "1 banco free" do Render. Cole a connection string no secret DATABASE_URL.
 
 services:
   # ---------------- API (Fastify + Prisma) ----------------
@@ -22,10 +19,9 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # cole a connection string do Neon/Supabase (com ?sslmode=require):
       - key: DATABASE_URL
-        fromDatabase:
-          name: kolibri-db
-          property: connectionString
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: SOLANA_CLUSTER
