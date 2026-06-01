@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kolibri — rastreabilidade da cannabis medicinal com prova na Solana</title>
+  <meta name="description" content="Kolibri registra cada etapa do ciclo da cannabis medicinal e ancora uma prova criptográfica verificável na Solana. Compliance LGPD, RDC 1.015/2026 e SNGPC, sem expor um único dado sensível." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Kolibri — da semente ao paciente, com prova que se verifica sozinha" />
+  <meta property="og:description" content="Rastreabilidade seed-to-sale e compliance de cannabis medicinal com Proof-of-Existence na Solana." />
+  <meta property="og:image" content="./assets/cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@kolibri_labs" />
+
+  <link rel="icon" type="image/png" href="./assets/logo-mark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Kolibri — início">
+        <img src="./assets/logo-mark.png" alt="" />
+        <span class="brand-name">Kolibri</span>
+        <span class="brand-tag">Labs</span>
+      </a>
+      <nav class="nav-links" aria-label="Seções">
+        <a class="navlink" href="#como">Como funciona</a>
+        <a class="navlink" href="#passaporte">Passaporte</a>
+        <a class="navlink" href="#privacidade">Privacidade</a>
+        <a class="navlink" href="#ecossistema">Ecossistema</a>
+      </nav>
+      <a class="btn btn-primary btn-sm" href="https://kolibri-web.onrender.com" target="_blank" rel="noopener">
+        Acessar a plataforma <span class="arrow">→</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow reveal">Seed-to-sale · Proof-of-Existence na Solana</span>
+          <h1 class="reveal d1">Da semente ao paciente, com prova que <span class="accent">se verifica sozinha.</span></h1>
+          <p class="lead reveal d2">A Kolibri registra cada etapa do ciclo da cannabis medicinal e ancora uma prova criptográfica na blockchain. Qualquer pessoa confere a origem de um lote. Nenhum dado sensível sai do sigilo.</p>
+          <div class="hero-cta reveal d3">
+            <a class="btn btn-primary" href="https://kolibri-web.onrender.com" target="_blank" rel="noopener">
+              Acessar a plataforma <span class="arrow">→</span>
+            </a>
+            <a class="btn btn-ghost" href="https://youtu.be/7TKv1oENYjc" target="_blank" rel="noopener">
+              <svg width="13" height="13" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 1.5v9l8-4.5z"/></svg>
+              Assistir ao vídeo
+            </a>
+          </div>
+          <p class="hero-note reveal d3"><span class="dot"></span> Contrato verificável publicado na devnet da Solana</p>
+        </div>
+
+        <!-- proof-of-existence receipt -->
+        <aside class="receipt reveal d2" aria-label="Recibo de prova on-chain">
+          <div class="receipt-head">
+            <span class="receipt-title">Proof of Existence</span>
+            <span class="chain-pill"><span class="dot"></span> Solana devnet</span>
+          </div>
+          <div class="receipt-row"><span class="k">evento</span><span class="v">colheita · lote CDB-01</span><span class="ok">✓</span></div>
+          <div class="receipt-row"><span class="k">sha256</span><span class="v">9f2a3c…e1b740</span><span class="ok">✓</span></div>
+          <div class="receipt-row"><span class="k">batch&nbsp;PDA</span><span class="v">3xK9…f1a2</span><span class="ok">✓</span></div>
+          <div class="receipt-row"><span class="k">NFT</span><span class="v">Metaplex Core · vinculado</span><span class="ok">✓</span></div>
+          <div class="receipt-row"><span class="k">tx</span><span class="v">confirmada · slot 298.441.027</span><span class="ok">✓</span></div>
+          <p class="receipt-foot">O recibo guarda apenas o hash do evento. CPF, CNS e prontuário ficam fora da cadeia, sempre.</p>
+        </aside>
+      </div>
+
+      <!-- trust strip -->
+      <div class="wrap">
+        <div class="trust reveal">
+          <div class="trust-inner">
+            <div class="trust-item">
+              <span class="t-k">Programa on-chain</span>
+              <a class="t-v mono" href="https://explorer.solana.com/address/Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF?cluster=devnet" target="_blank" rel="noopener">Bybi3n…Fxfqnf</a>
+            </div>
+            <div class="trust-item">
+              <span class="t-k">Build</span>
+              <span class="t-v">reproduzível · verificado</span>
+            </div>
+            <div class="trust-item">
+              <span class="t-k">Por planta</span>
+              <span class="t-v">1 NFT · 15 eventos do ciclo</span>
+            </div>
+            <div class="trust-item">
+              <span class="t-k">Dado sensível on-chain</span>
+              <span class="t-v">zero · só hashes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROBLEM ============ -->
+    <section class="problem section-pad">
+      <div class="wrap">
+        <div class="problem-head">
+          <span class="eyebrow reveal">O problema</span>
+          <h2 class="reveal d1">Rastrear cannabis medicinal é<br>uma exigência. Provar é outra.</h2>
+        </div>
+        <div class="problem-body reveal d1">
+          <p>No Brasil, um dispensário precisa responder a três frentes ao mesmo tempo: a <strong>LGPD</strong> sobre dados de paciente, a <strong>RDC 1.015/2026</strong> da Anvisa sobre o produto e o <strong>SNGPC</strong> sobre o controle de estoque. Planilhas e PDFs registram, mas não <em>provam</em> nada: podem ser editados depois do fato.</p>
+          <p>A Kolibri inverte a lógica. Cada ato do ciclo, do plantio à dispensação, gera uma prova matemática ancorada em blockchain pública. O registro deixa de ser uma promessa interna e passa a ser <strong>verificável por qualquer auditor, sem acesso ao seu banco de dados</strong>.</p>
+          <div class="reg-list">
+            <div class="reg-row"><span class="r-code">LGPD</span><span class="r-txt">Dados de paciente cifrados e fora da cadeia. On-chain só entra o hash.</span></div>
+            <div class="reg-row"><span class="r-code">RDC 1.015/2026</span><span class="r-txt">Fluxo regulatório de produto e prescrição modelado de ponta a ponta.</span></div>
+            <div class="reg-row"><span class="r-code">SNGPC</span><span class="r-txt">Controle de estoque e movimentação rastreável por lote.</span></div>
+            <div class="reg-row"><span class="r-code">NF-e</span><span class="r-txt">Emissão fiscal integrada ao mesmo registro de dispensação.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW ============ -->
+    <section class="how section-pad" id="como">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="eyebrow">Como funciona</span>
+          <h2>Quatro passos entre a planta<br>e uma prova pública.</h2>
+          <p class="lead">O dispensário só registra. A Kolibri assina, paga a taxa de rede e devolve a prova. Sem carteira para gerenciar, sem cripto para entender.</p>
+        </div>
+        <div class="steps">
+          <article class="step reveal">
+            <div class="s-num">01</div>
+            <div class="s-body">
+              <h3>Registra a planta</h3>
+              <p>O nascimento de cada planta abre um lote. A Kolibri cria uma conta dedicada na Solana (PDA) e cunha um NFT que vai acompanhar esse lote pelo resto da vida.</p>
+              <div class="s-meta"><span>conta <b>PDA Batch</b></span><span>token <b>Metaplex Core</b></span></div>
+            </div>
+          </article>
+          <article class="step reveal">
+            <div class="s-num">02</div>
+            <div class="s-body">
+              <h3>Registra os eventos do ciclo</h3>
+              <p>Rega, poda, colheita, secagem, análise laboratorial, dispensação. São até quinze eventos. Cada um é normalizado num JSON canônico e resumido em um hash.</p>
+              <div class="s-meta"><span>algoritmo <b>sha256</b></span><span>formato <b>JSON canônico (JCS)</b></span></div>
+            </div>
+          </article>
+          <article class="step reveal">
+            <div class="s-num">03</div>
+            <div class="s-body">
+              <h3>Ancora a prova na Solana</h3>
+              <p>O hash de cada evento é gravado on-chain, encadeado na raiz do lote. A partir daí, qualquer alteração no registro original quebra a prova de forma detectável.</p>
+              <div class="s-meta"><span>instrução <b>record_event</b></span><span>rede <b>Solana</b></span></div>
+            </div>
+          </article>
+          <article class="step reveal">
+            <div class="s-num">04</div>
+            <div class="s-body">
+              <h3>Publica o passaporte</h3>
+              <p>O lote ganha um Passaporte Digital de Produto público, com QR Code. Quem recebe recalcula os hashes no próprio navegador e confere, na hora, se batem com a blockchain.</p>
+              <div class="s-meta"><span>artefato <b>DPP público</b></span><span>verificação <b>no navegador</b></span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PASSPORT ============ -->
+    <section class="passport-sec section-pad" id="passaporte">
+      <div class="wrap passport-grid">
+        <div class="passport-copy reveal">
+          <span class="eyebrow on-paper">O passaporte digital</span>
+          <h2>A prova vira um documento que<br>qualquer um pode abrir.</h2>
+          <p>O Passaporte Digital de Produto reúne a procedência do lote, os selos de conformidade e os indicadores de rastreabilidade num único endereço público. O botão <em>Verificar on-chain</em> não confia na palavra da Kolibri: ele recomputa os hashes e bate contra a Solana.</p>
+          <ul class="pp-points">
+            <li><span class="chk">✓</span><span>Indicadores de completude, laboratório e ancoragem em tempo real.</span></li>
+            <li><span class="chk">✓</span><span>Selos de origem, COA, conformidade Anvisa e dispensação.</span></li>
+            <li><span class="chk">✓</span><span>Verificação criptográfica executada no dispositivo de quem consulta.</span></li>
+          </ul>
+        </div>
+
+        <!-- faithful DPP card -->
+        <div class="dpp reveal d1" aria-label="Exemplo de passaporte digital de produto">
+          <div class="dpp-top">
+            <div class="dpp-field">
+              <span class="dpp-pubbadge"><span class="dot"></span> Publicado</span>
+              <div class="f-k">Product Passport ID</div>
+              <div class="f-v id">01KT132TECBAX0EF</div>
+              <div class="f-k" style="margin-top:.7rem">Produto</div>
+              <div class="f-v">CBD · Lote Programa 1</div>
+              <div class="f-sub">Publicado 01/06/2026</div>
+            </div>
+            <div class="qr" aria-hidden="true">
+              <svg viewBox="0 0 29 29" shape-rendering="crispEdges" fill="var(--ink)">
+                <rect width="29" height="29" fill="var(--paper-2)"/>
+                <path d="M0 0h7v7H0zM2 2v3h3V2zM22 0h7v7h-7zM24 2v3h3V2zM0 22h7v7H0zM2 24v3h3v-3zM9 0h1v1H9zM11 0h2v2h-2zM14 1h1v3h-1zM16 0h1v2h-1zM18 0h1v1h-1zM9 2h1v1H9zM12 3h2v1h-2zM10 4h1v2h-1zM13 5h1v1h-1zM16 4h2v1h-2zM19 3h1v3h-1zM9 6h3v1H9zM8 9h1v2H8zM10 8h2v1h-2zM14 8h1v2h-1zM17 8h2v1h-2zM21 8h1v1h-1zM24 9h2v1h-2zM27 8h1v3h-1zM0 9h1v3H0zM2 10h3v1H2zM6 10h1v4h-1zM3 12h1v2h-1zM10 11h1v2h-1zM12 10h1v3h-1zM15 11h2v1h-2zM18 10h1v2h-1zM20 11h2v2h-2zM23 11h1v1h-1zM25 12h2v1h-2zM8 13h2v1H8zM13 13h1v2h-1zM16 13h2v2h-2zM0 14h2v1H0zM4 14h2v1H4zM9 15h1v2H9zM11 14h1v3h-1zM14 15h1v2h-1zM19 14h1v2h-1zM21 15h2v1h-2zM24 14h1v3h-1zM26 15h2v1h-2zM2 16h2v2H2zM6 16h2v1H6zM12 17h2v1h-2zM16 16h1v3h-1zM18 17h1v1h-1zM22 16h1v2h-1zM27 17h1v2h-1zM8 18h2v1H8zM0 19h1v2H0zM4 19h1v3h-1zM10 19h1v2h-1zM13 19h2v1h-2zM20 19h1v3h-1zM23 19h2v1h-2zM26 19h1v1h-1zM8 21h1v1H8zM9 9h2v1H9zM21 21h1v2h-1zM23 22h2v1h-2zM26 21h2v2h-2zM9 23h2v1H9zM12 22h1v3h-1zM14 23h2v1h-2zM17 22h1v3h-1zM19 24h1v1h-1zM9 25h1v3H9zM11 26h2v1h-2zM14 25h1v3h-1zM16 26h1v2h-1zM18 25h1v2h-1zM20 26h1v1h-1zM22 25h1v3h-1zM24 26h3v1h-3zM27 25h1v3h-1z"/>
+              </svg>
+            </div>
+            <div class="dpp-field dpp-respon">
+              <div class="f-k">Responsável (DPP)</div>
+              <div class="f-v id">5fpdL…bsqkP</div>
+              <div class="f-k" style="margin-top:.7rem">Emissor</div>
+              <div class="f-v">Kolibri</div>
+            </div>
+          </div>
+
+          <div class="dpp-gauges">
+            <div class="gauge">
+              <svg viewBox="0 0 80 80"><circle class="track" cx="40" cy="40" r="32"/><circle class="meter" cx="40" cy="40" r="32" stroke="var(--ink-dim)" data-pct="13"/><text class="g-val" x="40" y="44" text-anchor="middle">13%</text></svg>
+              <span class="g-lbl">Completude do ciclo</span>
+            </div>
+            <div class="gauge">
+              <svg viewBox="0 0 80 80"><circle class="track" cx="40" cy="40" r="32"/><circle class="meter" cx="40" cy="40" r="32" stroke="var(--ink-dim)" data-pct="0"/><text class="g-val" x="40" y="44" text-anchor="middle">0%</text></svg>
+              <span class="g-lbl">Aprovação laboratorial</span>
+            </div>
+            <div class="gauge">
+              <svg viewBox="0 0 80 80"><circle class="track" cx="40" cy="40" r="32"/><circle class="meter" cx="40" cy="40" r="32" stroke="var(--emerald-deep)" data-pct="100"/><text class="g-val" x="40" y="44" text-anchor="middle">100%</text></svg>
+              <span class="g-lbl">Rastreabilidade ancorada</span>
+            </div>
+          </div>
+
+          <div class="dpp-compliance">
+            <span class="cpill on"><span class="ring">✓</span> Origem registrada</span>
+            <span class="cpill"><span class="ring"></span> COA laboratorial</span>
+            <span class="cpill"><span class="ring"></span> Conformidade Anvisa</span>
+            <span class="cpill"><span class="ring"></span> Dispensação registrada</span>
+          </div>
+
+          <div class="dpp-foot">
+            <span class="poe">Prova de existência (PoE) ancorada na Solana. Recalcule os hashes e confira on-chain.</span>
+            <a class="btn btn-primary btn-sm" href="https://kolibri-web.onrender.com" target="_blank" rel="noopener">Verificar on-chain</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRIVACY ============ -->
+    <section class="privacy section-pad" id="privacidade">
+      <div class="wrap privacy-grid">
+        <div class="privacy-copy reveal">
+          <span class="eyebrow">Privacidade por design</span>
+          <h2>Tudo é verificável.<br>Nada sensível é exposto.</h2>
+          <p>A regra é simples e não tem exceção: dado de paciente nunca toca a blockchain. O hash é calculado no navegador, antes de qualquer envio. O que vai para a rede é uma impressão digital irreversível, suficiente para provar, inútil para vazar.</p>
+          <p>A Kolibri opera em <strong style="color:var(--bone)">custódia de serviço</strong>: o backend assina e paga as transações. O dispensário só faz login com a carteira e recebe o NFT do lote. A complexidade de cripto fica do nosso lado.</p>
+        </div>
+        <div class="ledger reveal d1" aria-label="O que vai e o que não vai para a blockchain">
+          <div class="ledger-col">
+            <div class="ledger-h on">↑ vai para a Solana</div>
+            <div class="ledger-line hash"><span class="tag">hash</span> evento &rarr; <span class="val">9f2a3c…e1b740</span></div>
+            <div class="ledger-line hash"><span class="tag">hash</span> lote &rarr; <span class="val">b71d0a…4c8e</span></div>
+            <div class="ledger-line"><span class="tag">id</span> NFT do lote &rarr; vinculado</div>
+          </div>
+          <div class="ledger-col">
+            <div class="ledger-h off">✕ nunca sai do sigilo</div>
+            <div class="ledger-line pii"><span class="tag">PII</span> CPF &rarr; <span class="val">•••••••••••</span></div>
+            <div class="ledger-line pii"><span class="tag">PII</span> CNS &rarr; <span class="val">•••••••••••</span></div>
+            <div class="ledger-line pii"><span class="tag">PII</span> prescrição &rarr; <span class="val">cifrada off-chain</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ECOSYSTEM ============ -->
+    <section class="eco section-pad" id="ecossistema">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="eyebrow">O ecossistema Kolibri</span>
+          <h2>A rastreabilidade é a base.<br>A economia vem em cima dela.</h2>
+          <p class="lead">Com a procedência provada on-chain, a Kolibri abre camadas de pagamento privado, crédito B2B e um token com lastro real. Roadmap pós-MVP, documentado no white paper.</p>
+        </div>
+
+        <div class="eco-pillars">
+          <article class="pillar reveal">
+            <div class="p-icn">// CLOAK</div>
+            <h3>Pagamentos privados</h3>
+            <p>Liquidação shielded com provas de conhecimento zero. O dispensário recebe, o valor da compra do paciente permanece confidencial.</p>
+            <div class="p-meta">UTXO shielded · Groth16</div>
+          </article>
+          <article class="pillar reveal d1">
+            <div class="p-icn">// CREDIT POOL</div>
+            <h3>Crédito B2B</h3>
+            <p>Score de crédito construído a partir do histórico on-chain do dispensário. Pools sênior, mezzanine e junior, sem intermediário bancário.</p>
+            <div class="p-meta">6–18% a.a. · score on-chain</div>
+          </article>
+          <article class="pillar reveal d2">
+            <div class="p-icn">// KNECT</div>
+            <h3>Token com lastro</h3>
+            <p>SPL Token-2022 com 25% da receita comprando cbBTC em cofre. Recompra e queima reduzem o supply à medida que a rede cresce.</p>
+            <div class="p-meta">lastro cbBTC · supply fixo</div>
+          </article>
+        </div>
+
+        <div class="timeline reveal">
+          <div class="tl-row">
+            <span class="tl-when done">Entregue</span>
+            <span class="tl-what"><b>MVP na devnet</b><span class="badge live">no ar</span> Registro de plantas, eventos, passaporte público e verificação on-chain.</span>
+          </div>
+          <div class="tl-row">
+            <span class="tl-when">Fase 2</span>
+            <span class="tl-what"><b>Mainnet e pilotos</b> Migração para mainnet com os três primeiros dispensários piloto.</span>
+          </div>
+          <div class="tl-row">
+            <span class="tl-when">Fase 2</span>
+            <span class="tl-what"><b>Cloak e NF-e automatizada</b> Pagamentos shielded e emissão fiscal e SNGPC integrados.</span>
+          </div>
+          <div class="tl-row">
+            <span class="tl-when">Nov · 2026</span>
+            <span class="tl-what"><b>TGE do KNECT</b><span class="badge">token</span> Lançamento do token e do Kolibri Credit Pool.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="cta-band section-pad">
+      <div class="wrap">
+        <div class="cta-card reveal">
+          <h2>Veja um lote provar a própria origem.</h2>
+          <p>Entre na plataforma, registre uma planta e acompanhe a prova ser ancorada na Solana em tempo real.</p>
+          <a class="btn btn-primary" href="https://kolibri-web.onrender.com" target="_blank" rel="noopener">
+            Acessar a plataforma <span class="arrow">→</span>
+          </a>
+          <div class="cta-sub">Hackanation 2026 · Trilha Solana</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="#top" aria-label="Kolibri">
+            <img src="./assets/logo-mark.png" alt="" />
+            <span class="brand-name">Kolibri</span>
+            <span class="brand-tag">Labs</span>
+          </a>
+          <p>Rastreabilidade seed-to-sale e compliance de cannabis medicinal, com prova de existência verificável na Solana.</p>
+          <div class="footer-socials">
+            <a href="https://x.com/kolibri_labs" target="_blank" rel="noopener" aria-label="X (Twitter) @kolibri_labs">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/kolibrilabs/" target="_blank" rel="noopener" aria-label="Instagram @kolibrilabs">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="mailto:kolibrilabs@gmail.com" aria-label="E-mail kolibrilabs@gmail.com">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2.5"/><path d="m3 6 9 7 9-7"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Plataforma</h4>
+          <a href="https://kolibri-web.onrender.com" target="_blank" rel="noopener">Acessar o app</a>
+          <a href="#como">Como funciona</a>
+          <a href="#passaporte">Passaporte digital</a>
+          <a href="#privacidade">Privacidade</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Projeto</h4>
+          <a href="https://github.com/pedro-pelicioni/kolibri" target="_blank" rel="noopener">Repositório no GitHub</a>
+          <a href="https://youtu.be/7TKv1oENYjc" target="_blank" rel="noopener">Vídeo de apresentação</a>
+          <a href="https://explorer.solana.com/address/Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF?cluster=devnet" target="_blank" rel="noopener">Contrato na Solana</a>
+          <a href="mailto:kolibrilabs@gmail.com">kolibrilabs@gmail.com</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span class="legal">© 2026 Kolibri Labs. Cannabis medicinal sob prescrição. Conteúdo regulatório, não recreativo.</span>
+        <span class="pid">programa <a href="https://explorer.solana.com/address/Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF?cluster=devnet" target="_blank" rel="noopener">Bybi3n…Fxfqnf</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./main.js"></script>
+</body>
+</html>

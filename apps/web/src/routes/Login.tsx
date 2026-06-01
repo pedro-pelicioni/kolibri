@@ -20,6 +20,10 @@ export function Login() {
     localStorage.setItem("kolibri_tut_seen", "1");
   };
 
+  // Site institucional (landing). TODO: ajustar o sufixo após o deploy no Render
+  // (provavelmente kolibri-landing-XXXX.onrender.com, como aconteceu com a API).
+  const LANDING_URL = "https://kolibri-landing.onrender.com";
+
   // Escape p/ destravar uma carteira presa (ex.: Hana bloqueada): desconecta,
   // limpa a seleção persistida e recarrega — sem precisar mexer no DevTools.
   const resetWallet = async () => {
@@ -104,6 +108,16 @@ export function Login() {
         <p className="mt-4 text-center text-[11px] text-neutral-400">
           Para dispensários. Seus dados sensíveis nunca vão on-chain — só hashes.
         </p>
+        <div className="mt-5 border-t border-neutral-100 pt-4 text-center">
+          <a
+            href={LANDING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11px] font-medium text-neutral-400 transition hover:text-brand-600"
+          >
+            Conheça o projeto no site oficial ↗
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ Kolibri é uma plataforma vertical de **gestão e compliance** para dispensário
 
 Este repositório entrega o **núcleo de rastreabilidade + Proof-of-Existence**: cada evento — do nascimento da planta à dispensação ao paciente — é registrado de forma **verificável e à prova de adulteração** na Solana, sem nunca expor dados sensíveis.
 
-> Trilha **Solana** · Hackanation 2026 (TokenNation) · **Repo:** https://github.com/pedro-pelicioni/kolibri
+> Trilha **Solana** · Hackanation 2026 (TokenNation) · **Site:** https://kolibri-landing.onrender.com · **App:** https://kolibri-web.onrender.com · **Repo:** https://github.com/pedro-pelicioni/kolibri
 
 ---
 

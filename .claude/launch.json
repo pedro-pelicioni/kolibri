@@ -6,6 +6,13 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@kolibri/web", "dev"],
       "port": 5173
+    },
+    {
+      "name": "landing",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/landing-preview.mjs"],
+      "port": 4321,
+      "autoPort": true
     }
   ]
 }
