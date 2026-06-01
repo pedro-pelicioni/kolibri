@@ -11,35 +11,6 @@ yarn-error.log*
 pnpm-debug.log*
 *.tsbuildinfo
 
-# ---- React Native ----
-# Xcode
-build/
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata
-*.xccheckout
-*.moved-aside
-DerivedData
-*.hmap
-*.ipa
-*.xcuserstate
-
-# Android/IntelliJ
-android/build/
-android/app/build/
-android/.gradle/
-android/local.properties
-android/captures/
-*.iml
-.idea/
-.gradle/
-
 # CocoaPods
 ios/Pods/
 ios/build/
@@ -81,29 +52,3 @@ lib-cov/
 # ---- Auto-generated API types (regenerate via openapi-typescript) ----
 src/api.d.ts
 
-# Environment & Secrets (AIOX)
-*.key
-
-# Dependencies (AIOX)
-node_modules
-
-# Build & Logs (AIOX)
-*.log
-logs/
-
-# IDE & OS (AIOX)
-Thumbs.db
-*.swp
-
-# AIOX Local (AIOX)
-.aiox-core/local/
-.claude/settings.local.json
-.aiox/install-log.txt
-.gemini/
-.claude/
-.github/
-.antigravity/
-.cursor/
-.codex/
-.aiox-core/
-.kimi/
