@@ -29,7 +29,6 @@ services:
         value: https://api.devnet.solana.com
       - key: PROGRAM_ID
         value: Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF
-      # COLE aqui (no painel, marcado como secret) o array do id.json:
       - key: SERVICE_KEYPAIR_JSON
         sync: false
       - key: API_PUBLIC_URL
