@@ -25,7 +25,7 @@ const STEPS: Step[] = [
   {
     icon: "⛓️",
     title: "3. Registre os eventos do ciclo",
-    body: "Abra a planta e adicione eventos (colheita, laudo do laboratório, embalagem, dispensação…). Cada um ancora um hash sha256 na Solana. Dados sensíveis (CPF/CNS) viram hash no próprio navegador — nunca vão on-chain.",
+    body: "Abra a planta e adicione eventos (colheita, laudo do laboratório, embalagem, dispensação…). Cada um ancora um hash sha256 na Solana.",
   },
   {
     icon: "🔍",
@@ -78,9 +78,8 @@ export function Tutorial({ open, onClose }: { open: boolean; onClose: () => void
           {STEPS.map((_, k) => (
             <span
               key={k}
-              className={`h-1.5 rounded-full transition-all ${
-                k === i ? "w-5 bg-brand-600" : "w-1.5 bg-neutral-300"
-              }`}
+              className={`h-1.5 rounded-full transition-all ${k === i ? "w-5 bg-brand-600" : "w-1.5 bg-neutral-300"
+                }`}
             />
           ))}
         </div>
