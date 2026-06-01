@@ -8,6 +8,14 @@ Plataforma de gestão e compliance para **dispensários** de cannabis medicinal 
 
 ---
 
+## 📸 Screenshots
+
+| Login + tutorial guiado pros juízes | Passaporte público (DPP) verificável on-chain |
+|:---:|:---:|
+| ![Login do Kolibri](docs/screenshots/01-login.png) | ![Passaporte público do Kolibri](docs/screenshots/02-passaporte.png) |
+
+---
+
 ## ✅ Requisitos do Hackanation 2026 — status
 
 | Requisito (regras) | Status |
@@ -20,16 +28,6 @@ Plataforma de gestão e compliance para **dispensários** de cannabis medicinal 
 | **Projeto publicado na Taikai** (não-draft) | ✅ trilha Solana, visível a todos |
 | **Vídeo 3–4 min (YouTube)** | ⬜ a gravar (roteiro: login → registrar planta → ancoragem → NFT → passaporte → verify) |
 | **Pitch + transação ao vivo** | ✅ "Registrar planta" no app **É** a transação demonstrável (ancora + minta on-chain) |
-
-**Provar a verificação ao vivo** (qualquer pessoa roda):
-```bash
-solana-verify verify-from-repo --base-image solanafoundation/solana-verifiable-build:3.1.12 \
-  --mount-path programs --library-name kolibri_registry \
-  --program-id Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF \
-  -u devnet https://github.com/pedro-pelicioni/kolibri
-# → "Program hash matches ✅"
-```
-> O **selo verde do Solscan** é mainnet-only (o serviço remoto da OtterSec rejeita devnet). Na devnet a verificação é real e comprovável pelo comando acima + pelo PDA on-chain.
 
 ---
 
