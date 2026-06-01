@@ -33,6 +33,20 @@ solana-verify verify-from-repo --base-image solanafoundation/solana-verifiable-b
 
 ---
 
+## 🔗 Provas on-chain (devnet) — clique e confira
+
+| O quê | Solana Explorer |
+|---|---|
+| **Programa** (`Executable: true`, verificado) | [`Bybi3n…fqnF`](https://explorer.solana.com/address/Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF?cluster=devnet) |
+| **Tx do deploy** | [`56Vx…459s`](https://explorer.solana.com/tx/56Vx4J8BjTpYv5EUr6mpdL9kfj3ju6PGsG85t6cPz56ocwboWEx21KGpHXKXvTQpAAMbUnHxHUkPwZqL8BYj459s?cluster=devnet) |
+| **Tx do PDA de verificação** | [`5to6…P2MA`](https://explorer.solana.com/tx/5to6nuP5KVbxUaoUPFPHPRUMXG5WnVmtgRGRc9zDRZyAR9KW88JYqpGcccx61moytvsv3xmoja2iuQe2HmZFP2MA?cluster=devnet) |
+| **NFT de uma planta** (Metaplex Core) | [`Dd9t…nE5b`](https://explorer.solana.com/address/Dd9tExQ6NNokv83pbndRFGTJTHbVPWzuUo26vFYYnE5b?cluster=devnet) |
+| **PDA de uma planta** (prova PoE) | [`DHYz…MWY9`](https://explorer.solana.com/address/DHYzh6bZkShtyq2eLE48hBmSJyPXmhNWbBLgpmkcMWY9?cluster=devnet) |
+
+Todas as transações têm data posterior ao início do hackathon. O programa é **upgradeable** (authority pública) e tem **build verificável** (bytecode on-chain = código deste repo).
+
+---
+
 ## O que está implementado
 
 Este repositório é o **núcleo de rastreabilidade on-chain** do Kolibri (o pilar "rastreabilidade imutável" da visão de produto):

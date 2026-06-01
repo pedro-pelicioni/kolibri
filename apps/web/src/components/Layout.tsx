@@ -1,7 +1,8 @@
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../lib/auth";
+import { Tutorial } from "./Tutorial";
 import { shortAddr } from "../lib/format";
 
 function NavLink({ to, children }: { to: string; children: ReactNode }) {
@@ -21,6 +22,7 @@ function NavLink({ to, children }: { to: string; children: ReactNode }) {
 
 export function Layout({ children }: { children: ReactNode }) {
   const { dispensary, logout } = useAuth();
+  const [tut, setTut] = useState(false);
 
   return (
     <div className="min-h-dvh bg-neutral-50 text-ink">
@@ -35,6 +37,13 @@ export function Layout({ children }: { children: ReactNode }) {
             <NavLink to="/register">Nova planta</NavLink>
           </nav>
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setTut(true)}
+              className="hidden rounded-lg px-2 py-1 text-sm text-neutral-500 transition hover:bg-neutral-100 sm:inline"
+            >
+              ❓ Tutorial
+            </button>
             {dispensary && (
               <span className="hidden text-xs text-neutral-500 md:inline">
                 {shortAddr(dispensary.walletPubkey, 4)}
@@ -52,6 +61,7 @@ export function Layout({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+      <Tutorial open={tut} onClose={() => setTut(false)} />
     </div>
   );
 }
