@@ -132,9 +132,8 @@ export function Passport() {
               {badges.map((b) => (
                 <span
                   key={b.key}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ring-1 ring-inset ${
-                    b.active ? toneCls[b.tone] : "bg-neutral-100 text-neutral-400 ring-neutral-300"
-                  }`}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ring-1 ring-inset ${b.active ? toneCls[b.tone] : "bg-neutral-100 text-neutral-400 ring-neutral-300"
+                    }`}
                 >
                   <span>{b.active ? "✓" : "○"}</span>
                   {b.label}
@@ -168,11 +167,10 @@ export function Passport() {
                 key={t}
                 type="button"
                 onClick={() => setTab(t)}
-                className={`rounded-t-lg px-4 py-2 text-sm font-medium transition ${
-                  tab === t
+                className={`rounded-t-lg px-4 py-2 text-sm font-medium transition ${tab === t
                     ? "border-b-2 border-brand-600 text-brand-700"
                     : "text-neutral-500 hover:text-neutral-800"
-                }`}
+                  }`}
               >
                 {t}
               </button>
@@ -184,7 +182,7 @@ export function Passport() {
         </div>
 
         <div className="py-8 text-center text-xs text-neutral-400">
-          Imagem meramente ilustrativa. Kolibri • rastreabilidade da planta.
+          Kolibri • Rastreabilidade de ponta a ponta.
         </div>
       </div>
     </div>
@@ -195,9 +193,8 @@ function VerifyBanner({ result, pda }: { result: VerifyResult; pda: string | nul
   const ok = result.ok;
   return (
     <div
-      className={`mt-3 rounded-2xl border p-4 text-sm ${
-        ok ? "border-brand-200 bg-brand-50 text-brand-800" : "border-amber-200 bg-amber-50 text-amber-800"
-      }`}
+      className={`mt-3 rounded-2xl border p-4 text-sm ${ok ? "border-brand-200 bg-brand-50 text-brand-800" : "border-amber-200 bg-amber-50 text-amber-800"
+        }`}
     >
       <div className="font-semibold">
         {ok ? "✓ Verificado on-chain" : "⚠ Verificação parcial"}
