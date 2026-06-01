@@ -1,8 +1,3 @@
-# Render Blueprint — sobe API (Node/Fastify) + Postgres + Web (Vite estático) de uma vez.
-# Como usar: Render → New → Blueprint → conecte o repo. Depois cole o secret
-# SERVICE_KEYPAIR_JSON (o array do ~/.config/solana/id.json) no serviço kolibri-api.
-# Docs: https://render.com/docs/blueprint-spec
-
 databases:
   - name: kolibri-db
     databaseName: kolibri
