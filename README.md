@@ -16,7 +16,7 @@ Plataforma de gestão e compliance para **dispensários** de cannabis medicinal 
 | **Endereço público do contrato** | ✅ [`Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF`](https://explorer.solana.com/address/Bybi3nTRCF1CU15BvwLnMA4B27YGs5BuoVXeFzFxfqnF?cluster=devnet) |
 | **Contrato verificado em explorador público** | ✅ **build verificável** (bate byte-a-byte com o repo público) + **PDA de verificação on-chain** |
 | **Código em um único repositório GitHub público** (contracts + back-end + frontend) | ✅ este monorepo — `programs/` + `apps/api` + `apps/web` |
-| **Frontend com link público** (opcional, agrega valor) | 🟡 deploy via **Render** (seção [Deploy](#deploy-na-nuvem-render)) → `kolibri-web.onrender.com` |
+| **Frontend com link público** (opcional, agrega valor) | ✅ **no ar no Render** (API + Postgres + web — ver [Deploy](#deploy-na-nuvem-render)) |
 | **Projeto publicado na Taikai** (não-draft) | ✅ trilha Solana, visível a todos |
 | **Vídeo 3–4 min (YouTube)** | ⬜ a gravar (roteiro: login → registrar planta → ancoragem → NFT → passaporte → verify) |
 | **Pitch + transação ao vivo** | ✅ "Registrar planta" no app **É** a transação demonstrável (ancora + minta on-chain) |
@@ -51,7 +51,7 @@ Este repositório é o **núcleo de rastreabilidade on-chain** do Kolibri (o pil
 kolibri/
 ├─ apps/
 │  ├─ web/        # Vite + React + Tailwind v4 + wallet-adapter (SIWS) — dashboard, forms, passaporte
-│  └─ api/        # Fastify + Prisma + Postgres — SIWS, canonical-JSON+sha256, worker de ancoragem, faucet
+│  └─ api/        # Fastify + Prisma + Postgres — SIWS, canonical-JSON+sha256, worker de ancoragem
 ├─ packages/
 │  ├─ types/      # @kolibri/types — 15 eventos (zod) + DTOs
 │  ├─ sdk/        # @kolibri/sdk — canonicalize, sha256, ULID↔16b, client do programa, mappers do passaporte
@@ -150,8 +150,8 @@ O equivalente Solana ao Etherscan é o **Solana Explorer / Solscan**. O contrato
 | Componente | Estado |
 |---|---|
 | Programa `kolibri_registry` | ✅ build + 5/5 testes + **deploy + verificado na devnet** |
-| API (SIWS, CRUD, worker, passaporte, verify, faucet) | ✅ E2E validado na devnet (NFT minta + sha256 confere 3/3) |
+| API (SIWS, CRUD, worker, passaporte, verify) | ✅ E2E validado na devnet (NFT minta + sha256 confere 3/3) |
 | Web (login, dashboard, forms, passaporte DPP + verify) | ✅ builda + renderiza com dados reais |
-| Deploy nuvem | 🟡 `render.yaml` pronto — rodar o blueprint pro link público |
+| Deploy nuvem (Render) | ✅ API + Postgres + web no ar (blueprint `render.yaml`) |
 
 > Docs dos 15 eventos: [`docs/event-schemas.md`](./docs/event-schemas.md). Arquitetura mobile anterior ao pivô: `HANDOFF.md`/`docs/MOBILE.md` (legado).

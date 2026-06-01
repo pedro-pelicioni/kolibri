@@ -43,8 +43,6 @@ services:
         value: kolibri-web.onrender.com
       - key: PUBLIC_PASSPORT_BASE_URL
         value: https://kolibri-web.onrender.com/passport
-      - key: FAUCET_LAMPORTS
-        value: "100000000"
 
   # ---------------- Web (Vite — site estático) ----------------
   - type: web

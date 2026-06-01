@@ -1,6 +1,5 @@
 import type { BatchDTO } from "@kolibri/types";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AnchorBadge, StatusChip } from "../components/badges";
 import { Layout } from "../components/Layout";
@@ -30,53 +29,22 @@ export function Dashboard() {
     refetchInterval: 5000,
   });
 
-  const [funding, setFunding] = useState(false);
-  const [fundMsg, setFundMsg] = useState<string | null>(null);
-  const handleFaucet = async () => {
-    setFunding(true);
-    setFundMsg(null);
-    try {
-      const r = await api.post<{ funded: boolean; balance: number; lamports: number }>("/faucet");
-      const sol = (r.balance / 1e9).toFixed(3);
-      setFundMsg(
-        r.funded
-          ? `+${(r.lamports / 1e9).toFixed(2)} SOL enviado · saldo ${sol} SOL`
-          : `já tem saldo suficiente (${sol} SOL)`,
-      );
-    } catch {
-      setFundMsg("não foi possível enviar SOL (a keypair de serviço tem saldo?)");
-    } finally {
-      setFunding(false);
-    }
-  };
-
   return (
     <Layout>
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Plantas</h1>
           <p className="text-sm text-neutral-500">
             Rastreabilidade seed-to-sale ancorada na Solana.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleFaucet}
-            disabled={funding}
-            className="rounded-xl border border-neutral-300 px-3 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 disabled:opacity-50"
-          >
-            {funding ? "Enviando…" : "Receber SOL de teste"}
-          </button>
-          <Link
-            to="/register"
-            className="rounded-xl bg-brand-600 px-4 py-2.5 font-semibold text-white transition hover:bg-brand-700"
-          >
-            + Nova planta
-          </Link>
-        </div>
+        <Link
+          to="/register"
+          className="rounded-xl bg-brand-600 px-4 py-2.5 font-semibold text-white transition hover:bg-brand-700"
+        >
+          + Nova planta
+        </Link>
       </div>
-      {fundMsg && <p className="mt-2 text-right text-xs text-neutral-500">{fundMsg}</p>}
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Metric label="Total" value={data?.metrics.total ?? "—"} />

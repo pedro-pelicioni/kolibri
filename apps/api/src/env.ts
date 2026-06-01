@@ -18,8 +18,6 @@ const schema = z.object({
   PUBLIC_PASSPORT_BASE_URL: z.string().default("http://localhost:5173/passport"),
   API_PUBLIC_URL: z.string().default("http://localhost:8080"),
   UPLOAD_DIR: z.string().default("uploads"),
-  // quanto o /faucet transfere da keypair de serviço p/ a wallet conectada (default 0,1 SOL)
-  FAUCET_LAMPORTS: z.coerce.number().default(100_000_000),
 });
 
 const parsed = schema.parse(process.env);

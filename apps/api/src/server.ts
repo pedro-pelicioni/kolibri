@@ -11,7 +11,6 @@ import { env } from "./env.js";
 import authPlugin from "./plugins/auth.js";
 import prismaPlugin from "./plugins/prisma.js";
 import { authRoutes } from "./routes/auth.js";
-import { faucetRoutes } from "./routes/faucet.js";
 import { healthRoutes } from "./routes/health.js";
 import { passportRoutes } from "./routes/passport.js";
 import { plantRoutes } from "./routes/plants.js";
@@ -57,7 +56,6 @@ async function main() {
   await app.register(plantRoutes);
   await app.register(passportRoutes);
   await app.register(uploadRoutes);
-  await app.register(faucetRoutes);
 
   const stopWorker = startAnchorWorker(app);
   app.addHook("onClose", async () => stopWorker());

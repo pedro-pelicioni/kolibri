@@ -52,10 +52,6 @@ async function main() {
   const auth = { authorization: `Bearer ${verify.accessToken}`, "content-type": "application/json" };
   console.log("✓ autenticado (JWT)");
 
-  // faucet: gift de SOL p/ a wallet conectada (transfer da keypair de serviço)
-  const faucet = await j(await fetch(`${BASE}/faucet`, { method: "POST", headers: auth, body: "{}" }));
-  console.log(`✓ faucet: funded=${faucet.funded} saldo=${(faucet.balance / 1e9).toFixed(3)} SOL`);
-
   // 4) registra planta
   const batch = await j(
     await fetch(`${BASE}/plants`, {
