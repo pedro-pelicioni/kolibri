@@ -10,9 +10,9 @@ Plataforma de gestão e compliance para **dispensários** de cannabis medicinal 
 
 ## 📸 Screenshots
 
-| Login + tutorial guiado pros juízes | Passaporte público (DPP) verificável on-chain |
+| Home | Passaporte público (DPP) verificável on-chain |
 |:---:|:---:|
-| ![Login do Kolibri](docs/screenshots/01-login.png) | ![Passaporte público do Kolibri](docs/screenshots/02-passaporte.png) |
+| ![Home do Kolibri](docs/screenshots/01-login.png) | ![Passaporte público do Kolibri](docs/screenshots/02-passaporte.png) |
 
 ---
 

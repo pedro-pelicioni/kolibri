@@ -38,7 +38,7 @@ services:
       - key: SERVICE_KEYPAIR_JSON
         sync: false
       - key: API_PUBLIC_URL
-        value: https://kolibri-api.onrender.com
+        value: https://kolibri-api-10co.onrender.com
       - key: APP_DOMAIN
         value: kolibri-web.onrender.com
       - key: PUBLIC_PASSPORT_BASE_URL
